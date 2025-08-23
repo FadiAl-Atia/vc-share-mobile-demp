@@ -1,12 +1,18 @@
+import Card from "@/components/speciality-card";
+import { Button, ButtonText } from "@/components/ui/button";
 import { SearchIcon } from "@/components/ui/icon";
 import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
 import { useFonts } from "expo-font";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import Svg, { Path } from "react-native-svg";
-import cardsData from "./arrayData";
-
 import { useState } from "react";
-import { Card } from "./components/speciality-card";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import Svg, { Path } from "react-native-svg";
+import cardsData from "../assets/arrayData";
 
 export default function Index() {
   const searchIcon = (
@@ -14,16 +20,16 @@ export default function Index() {
       <Path
         d="M8.25 14.25C11.5637 14.25 14.25 11.5637 14.25 8.25C14.25 4.93629 11.5637 2.25 8.25 2.25C4.93629 2.25 2.25 4.93629 2.25 8.25C2.25 11.5637 4.93629 14.25 8.25 14.25Z"
         stroke="#62748E"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <Path
         d="M15.75 15.75L12.525 12.525"
         stroke="#62748E"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </Svg>
   );
@@ -33,16 +39,23 @@ export default function Index() {
     FrutigerArabicBold: require("../assets/fonts/FrutigerLTArabic65Bold.ttf"),
   });
 
-  if (!loaded) return null;
-
   // state
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
+  const [buttonResponse, setButtonResponse] = useState(false);
 
   // handle card in the other component
   const handleCardPress = (cardId: string) => {
     activeCardId === cardId ? setActiveCardId(null) : setActiveCardId(cardId);
   };
 
+  //handle button
+  const handleButton = () => {
+    console.log("Pressed");
+    activeCardId ? setButtonResponse(false) : setButtonResponse(true);
+  };
+
+  if (!loaded) return null;
+  const { width } = useWindowDimensions();
   return (
     <View style={styles.layout}>
       <Text style={styles.fontHeading}>اختيار التخصص</Text>
@@ -106,10 +119,10 @@ export default function Index() {
       </View>
       <View>
         <Input
-          style={{ borderRadius: 25, marginTop: 6, height: 40, width: 400 }}
+          style={{ borderRadius: 25, marginTop: 6, height: 40, width: 300 }}
         >
           <InputField
-            placeholder="البحث"
+            placeholder="البحث..."
             textAlign="right"
             style={{
               writingDirection: "rtl",
@@ -123,7 +136,7 @@ export default function Index() {
         </Input>
       </View>
 
-      <ScrollView style={{ marginTop: 9 }}>
+      <ScrollView style={{ marginTop: 9, width: width * 0.8 }}>
         <View style={{ gap: 20 }}>
           {cardsData.map((card) => (
             <Card
@@ -131,12 +144,49 @@ export default function Index() {
               cardId={card.id}
               name={card.name}
               description={card.description}
-              isActive={activeCardId === card.id}
+              isActive={activeCardId === card.id} //this determines who is active.
               onPress={handleCardPress}
             />
           ))}
         </View>
       </ScrollView>
+      <View style={styles.buttons}>
+        <Button
+          size="md"
+          variant="solid"
+          action="primary"
+          style={{
+            backgroundColor: "white",
+          }}
+        >
+          <ButtonText
+            style={{
+              color: "black",
+              fontWeight: "normal",
+              fontFamily: "FrutigerArabicBold",
+            }}
+          >
+            الرجوع
+          </ButtonText>
+        </Button>
+        <Button
+          size="md"
+          variant="solid"
+          action="primary"
+          style={{ backgroundColor: "#2AB25F" }}
+          onPress={() => handleButton()}
+          disabled={!activeCardId ? true : false}
+        >
+          <ButtonText style={{ fontFamily: "FrutigerArabicBold" }}>
+            المتابعة
+          </ButtonText>
+        </Button>
+      </View>
+      {buttonResponse && (
+        <View>
+          <Text style={{ color: "red" }}>Please select a speciality</Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -169,5 +219,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flexDirection: "row",
     marginTop: 6,
+  },
+  buttons: {
+    flexDirection: "row",
+    gap: 38,
+    marginTop: 14,
+    marginBottom: 18,
   },
 });
