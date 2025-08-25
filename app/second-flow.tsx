@@ -12,7 +12,7 @@ export default function Index() {
 
   return (
     <View style={styles.layout}>
-      <Text>This is a notification page</Text>
+      <Text>This is a second flow</Text>
     </View>
   );
 }

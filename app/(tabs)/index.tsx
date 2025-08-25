@@ -3,6 +3,7 @@ import { Button, ButtonText } from "@/components/ui/button";
 import { SearchIcon } from "@/components/ui/icon";
 import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
 import { useFonts } from "expo-font";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ScrollView,
@@ -12,7 +13,7 @@ import {
   View,
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import cardsData from "../assets/arrayData";
+import cardsData from "../../assets/arrayData";
 
 export default function Index() {
   const searchIcon = (
@@ -34,9 +35,9 @@ export default function Index() {
     </Svg>
   );
   const [loaded] = useFonts({
-    FrutigerArabicLight: require("../assets/fonts/FrutigerLTArabic45Light.ttf"),
-    FrutigerArabicRoman: require("../assets/fonts/FrutigerLTArabic55Roman.ttf"),
-    FrutigerArabicBold: require("../assets/fonts/FrutigerLTArabic65Bold.ttf"),
+    FrutigerArabicLight: require("../../assets/fonts/FrutigerLTArabic45Light.ttf"),
+    FrutigerArabicRoman: require("../../assets/fonts/FrutigerLTArabic55Roman.ttf"),
+    FrutigerArabicBold: require("../../assets/fonts/FrutigerLTArabic65Bold.ttf"),
   });
 
   // state
@@ -47,15 +48,19 @@ export default function Index() {
   const handleCardPress = (cardId: string) => {
     activeCardId === cardId ? setActiveCardId(null) : setActiveCardId(cardId);
   };
-
+  const router = useRouter();
   //handle button
   const handleButton = () => {
     console.log("Pressed");
     activeCardId ? setButtonResponse(false) : setButtonResponse(true);
+    if (activeCardId) {
+      router.push("/second-flow"); //talk about router.replace
+    }
   };
 
-  if (!loaded) return null;
   const { width } = useWindowDimensions();
+  if (!loaded) return null;
+
   return (
     <View style={styles.layout}>
       <Text style={styles.fontHeading}>اختيار التخصص</Text>

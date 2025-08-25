@@ -3,16 +3,16 @@ import { StyleSheet, Text, View } from "react-native";
 
 export default function Index() {
   const [loaded] = useFonts({
-    FrutigerArabicLight: require("../assets/fonts/FrutigerLTArabic45Light.ttf"),
-    FrutigerArabicRoman: require("../assets/fonts/FrutigerLTArabic55Roman.ttf"),
-    FrutigerArabicBold: require("../assets/fonts/FrutigerLTArabic65Bold.ttf"),
+    FrutigerArabicLight: require("../../assets/fonts/FrutigerLTArabic45Light.ttf"),
+    FrutigerArabicRoman: require("../../assets/fonts/FrutigerLTArabic55Roman.ttf"),
+    FrutigerArabicBold: require("../../assets/fonts/FrutigerLTArabic65Bold.ttf"),
   });
 
   if (!loaded) return null;
 
   return (
     <View style={styles.layout}>
-      <Text>This is a dashboard page</Text>
+      <Text>This is a profile page</Text>
     </View>
   );
 }
