@@ -21,7 +21,11 @@
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
+    "@tanstack/react-form": "^1.19.2",
+    "@tanstack/zod-form-adapter": "^0.42.1",
     "babel-plugin-module-resolver": "^5.0.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "expo": "53.0.22",
     "expo-blur": "~14.1.5",
     "expo-constants": "~17.1.7",
@@ -47,8 +51,11 @@
     "react-native-svg": "15.11.2",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
+    "tailwind-merge": "^3.3.1",
     "tailwindcss": "^3.4.17",
-    "zod": "^4.0.17"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^4.1.1",
+    "expo-document-picker": "~13.1.6"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

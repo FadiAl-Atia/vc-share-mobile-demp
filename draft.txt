@@ -1,0 +1,15 @@
+ <Label
+          style={{ alignSelf: "flex-start", fontFamily: "FrutigerArabicBold" }}
+        >
+          ارفاق الملفات
+        </Label>
+        <Input>
+          <InputSlot>
+            <InputIcon as={DocumentIcon} />
+          </InputSlot>
+          <InputField
+            type="text"
+            placeholder="تحميل الملفات"
+            variant="outline"
+          ></InputField>
+        </Input>

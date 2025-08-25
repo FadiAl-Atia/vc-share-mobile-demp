@@ -2,7 +2,6 @@ import Card from "@/components/speciality-card";
 import { Button, ButtonText } from "@/components/ui/button";
 import { SearchIcon } from "@/components/ui/icon";
 import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
-import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -34,11 +33,11 @@ export default function Index() {
       />
     </Svg>
   );
-  const [loaded] = useFonts({
-    FrutigerArabicLight: require("../../assets/fonts/FrutigerLTArabic45Light.ttf"),
-    FrutigerArabicRoman: require("../../assets/fonts/FrutigerLTArabic55Roman.ttf"),
-    FrutigerArabicBold: require("../../assets/fonts/FrutigerLTArabic65Bold.ttf"),
-  });
+  // const [loaded] = useFonts({
+  //   FrutigerArabicLight: require("../../assets/fonts/FrutigerLTArabic45Light.ttf"),
+  //   FrutigerArabicRoman: require("../../assets/fonts/FrutigerLTArabic55Roman.ttf"),
+  //   FrutigerArabicBold: require("../../assets/fonts/FrutigerLTArabic65Bold.ttf"),
+  // });
 
   // state
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
@@ -49,17 +48,16 @@ export default function Index() {
     activeCardId === cardId ? setActiveCardId(null) : setActiveCardId(cardId);
   };
   const router = useRouter();
-  //handle button
+  //handle submit button
   const handleButton = () => {
-    console.log("Pressed");
     activeCardId ? setButtonResponse(false) : setButtonResponse(true);
     if (activeCardId) {
-      router.push("/second-flow"); //talk about router.replace
+      router.push("/second-flow");
     }
   };
 
   const { width } = useWindowDimensions();
-  if (!loaded) return null;
+  // if (!loaded) return null;
 
   return (
     <View style={styles.layout}>
