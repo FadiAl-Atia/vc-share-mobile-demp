@@ -1,4 +1,4 @@
-const cardsData = [
+const specialityData = [
   {
     id: "card1",
     name: "الطب العام",
@@ -46,4 +46,4 @@ const cardsData = [
   },
 ];
 
-export default cardsData;
+export default specialityData;

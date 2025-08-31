@@ -1,4 +1,3 @@
-import { useFonts } from "expo-font";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 export default function Card({
@@ -15,17 +14,8 @@ export default function Card({
   isActive: boolean;
   onPress: (cardId: string) => void;
 }) {
-  //fonts, will move to layout later
-  const [loaded] = useFonts({
-    FrutigerArabicLight: require("../assets/fonts/FrutigerLTArabic45Light.ttf"),
-    FrutigerArabicRoman: require("../assets/fonts/FrutigerLTArabic55Roman.ttf"),
-    FrutigerArabicBold: require("../assets/fonts/FrutigerLTArabic65Bold.ttf"),
-  });
-  //check that fonts loaded correctly, if not, dont render.
-  if (!loaded) return null;
-
   //handle Press
-  function handlePress() {
+  function handleSpecialityPress() {
     onPress(cardId);
   }
 
@@ -35,12 +25,23 @@ export default function Card({
   const color = "white";
 
   return (
-    <Pressable onPress={handlePress}>
+    <Pressable onPress={handleSpecialityPress}>
       <View
         style={{
           alignItems: "center",
         }}
       >
+        <View style={[styles.checkMark, !isActive && styles.checkMarkHidden]}>
+          <Svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <Path
+              d="M14.243 4.841L6.50853 12.5755L2.99286 9.05981"
+              stroke="#2AB25F"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </Svg>
+        </View>
         <View
           style={[
             styles.layout,
@@ -49,18 +50,6 @@ export default function Card({
         >
           <View style={styles.innerLayout}>
             <View style={styles.innerTitle}>
-              <View style={isActive ? styles.svgPosition : styles.hidden}>
-                <Svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <Path
-                    d="M14.243 4.841L6.50853 12.5755L2.99286 9.05981"
-                    stroke="#2AB25F"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </Svg>
-              </View>
-
               <Text
                 style={{ marginRight: 8, fontFamily: "FrutigerArabicBold" }}
               >
@@ -149,6 +138,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontFamily: "FrutigerArabicRoman",
     writingDirection: "rtl",
+    direction: "rtl",
   },
   testLayout: {
     flexDirection: "column",
@@ -158,18 +148,19 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 8,
   },
-  svgPosition: {
-    position: "relative",
-    right: 145,
-    height: 26.25,
-    width: 26.25,
-    borderRadius: 100,
+
+  checkMark: {
+    position: "absolute",
+    top: 7,
+    height: 26,
+    right: 290,
+    width: 26,
+    borderRadius: 13,
     borderWidth: 1,
+    borderColor: "#2AB25F",
+    backgroundColor: "#FFFFFF",
     justifyContent: "center",
     alignItems: "center",
-    borderColor: "#2AB25F",
   },
-  hidden: {
-    display: "none",
-  },
+  checkMarkHidden: { opacity: 0 },
 });

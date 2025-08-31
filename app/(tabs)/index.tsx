@@ -1,6 +1,5 @@
 import Card from "@/components/speciality-card";
 import { Button, ButtonText } from "@/components/ui/button";
-import { SearchIcon } from "@/components/ui/icon";
 import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -12,10 +11,10 @@ import {
   View,
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import cardsData from "../../assets/arrayData";
+import specialityData from "../../assets/arrayData";
 
 export default function Index() {
-  const searchIcon = (
+  const InputFieldSearchIcon = () => (
     <Svg width="18" height="18" viewBox="0 0 18 18" fill="none">
       <Path
         d="M8.25 14.25C11.5637 14.25 14.25 11.5637 14.25 8.25C14.25 4.93629 11.5637 2.25 8.25 2.25C4.93629 2.25 2.25 4.93629 2.25 8.25C2.25 11.5637 4.93629 14.25 8.25 14.25Z"
@@ -33,31 +32,30 @@ export default function Index() {
       />
     </Svg>
   );
-  // const [loaded] = useFonts({
-  //   FrutigerArabicLight: require("../../assets/fonts/FrutigerLTArabic45Light.ttf"),
-  //   FrutigerArabicRoman: require("../../assets/fonts/FrutigerLTArabic55Roman.ttf"),
-  //   FrutigerArabicBold: require("../../assets/fonts/FrutigerLTArabic65Bold.ttf"),
-  // });
-
   // state
-  const [activeCardId, setActiveCardId] = useState<string | null>(null);
-  const [buttonResponse, setButtonResponse] = useState(false);
+  const [selectedSpeciality, setSelectedSpeciality] = useState<string | null>(
+    null
+  );
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   // handle card in the other component
-  const handleCardPress = (cardId: string) => {
-    activeCardId === cardId ? setActiveCardId(null) : setActiveCardId(cardId);
+  const handleSpecialityPress = (specialityId: string) => {
+    selectedSpeciality === specialityId
+      ? setSelectedSpeciality(null)
+      : setSelectedSpeciality(specialityId);
   };
+  //Using router hook to push the second page of the flow
   const router = useRouter();
+
   //handle submit button
-  const handleButton = () => {
-    activeCardId ? setButtonResponse(false) : setButtonResponse(true);
-    if (activeCardId) {
+  const handleSubmitButton = () => {
+    selectedSpeciality ? setIsSubmitted(false) : setIsSubmitted(true);
+    if (selectedSpeciality) {
       router.push("/second-flow");
     }
   };
 
   const { width } = useWindowDimensions();
-  // if (!loaded) return null;
 
   return (
     <View style={styles.layout}>
@@ -134,21 +132,21 @@ export default function Index() {
             }}
           />
           <InputSlot className="pr-3">
-            <InputIcon as={SearchIcon} size="sm" />
+            <InputIcon as={InputFieldSearchIcon} size="sm" />
           </InputSlot>
         </Input>
       </View>
 
       <ScrollView style={{ marginTop: 9, width: width * 0.8 }}>
         <View style={{ gap: 20 }}>
-          {cardsData.map((card) => (
+          {specialityData.map((speciality) => (
             <Card
-              key={card.id}
-              cardId={card.id}
-              name={card.name}
-              description={card.description}
-              isActive={activeCardId === card.id} //this determines who is active.
-              onPress={handleCardPress}
+              key={speciality.id}
+              cardId={speciality.id}
+              name={speciality.name}
+              description={speciality.description}
+              isActive={selectedSpeciality === speciality.id} //this determines who is active.
+              onPress={handleSpecialityPress}
             />
           ))}
         </View>
@@ -177,17 +175,16 @@ export default function Index() {
           variant="solid"
           action="primary"
           style={{ backgroundColor: "#2AB25F" }}
-          onPress={() => handleButton()}
-          disabled={!activeCardId ? true : false}
+          onPress={() => handleSubmitButton()}
         >
           <ButtonText style={{ fontFamily: "FrutigerArabicBold" }}>
             المتابعة
           </ButtonText>
         </Button>
       </View>
-      {buttonResponse && (
+      {isSubmitted && (
         <View>
-          <Text style={{ color: "red" }}>Please select a speciality</Text>
+          <Text style={{ color: "red" }}>الرجاء اختيار أحد التخصصات أعلاه</Text>
         </View>
       )}
     </View>

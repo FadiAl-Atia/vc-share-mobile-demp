@@ -3,6 +3,7 @@ import { Input, InputField } from "@/components/ui/input";
 import { Label } from "@react-navigation/elements";
 import { useForm } from "@tanstack/react-form";
 import * as DocumentPicker from "expo-document-picker";
+import { router } from "expo-router";
 import { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -16,32 +17,41 @@ import {
 import { z } from "zod";
 
 export default function Index() {
+  //State
+  const [document, setDocument] = useState<PickedFile[]>([]);
   type PickedFile = DocumentPicker.DocumentPickerAsset;
-
   const { width } = useWindowDimensions();
-  const [files, setFiles] = useState<PickedFile[]>([]);
 
-  function deleteDocument(key: number) {
-    setFiles(files.filter((_, i) => i != key));
-  }
-
-  //The schema must be the same as the form
+  //Schema
   const formSchema = z.object({
-    name: z.string().min(2, "Please provide a valid name").max(32),
+    name: z.string().min(2, "الاسم مطلوب").max(32),
     sex: z.string(),
-    age: z.string().min(2, "You have to be 18 years old"),
-    symptopms: z.string().min(1, "Please provide a proper description"),
+    age: z.string().min(2, "يجب أن يكون العمر لا يقل عن 18 عاما"),
+    symptopms: z.string().min(1, "يرجى وصف الحالة بدقة أكبر"),
     document: z
       .array(
         z.custom<DocumentPicker.DocumentPickerAsset>(
           (val) => typeof val === "object" && val !== null,
-          { message: "Please attach a valid document" }
+          { message: "يرجى ارفاق المستندات الصحيحة" }
         )
       )
-      .min(1, { message: "Please attach at least one document" })
       .nullable(),
   });
 
+  //Documents Methods
+  const pickDocument = async () => {
+    const response = await DocumentPicker.getDocumentAsync({
+      multiple: true,
+    });
+    setDocument(response.assets ?? []);
+    form.setFieldValue("document", response.assets ?? null);
+  };
+
+  function deleteDocument(key: number) {
+    setDocument(document.filter((_, i) => i != key));
+  }
+
+  //Form Hook
   const form = useForm({
     defaultValues: {
       name: "محمد علي",
@@ -51,26 +61,14 @@ export default function Index() {
       document: null as DocumentPicker.DocumentPickerAsset[] | null,
     },
     onSubmit: ({ value }) => {
-      console.log(`👤 Name: ${value.name}`);
-      console.log(`📅 Age: ${value.age}`);
-      console.log(`⚧ Sex: ${value.sex}`);
-      console.log(`📝 Symptoms: ${value.symptopms}`);
-      console.log("📂 Document:", value.document);
+      console.log(value);
+      router.push("/third-flow");
     },
     validators: {
       onChange: formSchema,
     },
   });
 
-  const pickDocument = async () => {
-    const response = await DocumentPicker.getDocumentAsync({
-      multiple: true,
-    });
-    const responseFiltered = response.assets?.map((e) => e.name) ?? [];
-    setFiles(response.assets ?? []);
-    form.setFieldValue("document", response.assets ?? null);
-    console.log(response);
-  };
   return (
     <KeyboardAvoidingView
       style={styles.layout}
@@ -103,7 +101,6 @@ export default function Index() {
                 />
               </Input>
               {field.state.meta.errors.length > 0 && <Text>Error</Text>}
-              <Text></Text>
             </View>
           )}
         />
@@ -173,6 +170,36 @@ export default function Index() {
             </View>
           )}
         />
+        <Button size="md" variant="outline" onPress={pickDocument}>
+          <Text>ارفاق الملفات</Text>
+        </Button>
+        <Text
+          style={{
+            fontFamily: "FrutigerArabicRoman",
+            fontSize: 12,
+            color: "#737373",
+            marginTop: 0,
+          }}
+        >
+          PDF, PNG, JPG
+        </Text>
+        <View>
+          {document.map((e, key) => (
+            <View style={styles.fileContainer}>
+              <View style={styles.fileInnerContainer}>
+                <Text>
+                  {e.name}
+                  <Button
+                    onPress={() => deleteDocument(key)}
+                    style={styles.deleteFileButton}
+                  >
+                    <ButtonText>x</ButtonText>
+                  </Button>
+                </Text>
+              </View>
+            </View>
+          ))}
+        </View>
 
         <View style={styles.buttons}>
           <Button
@@ -201,23 +228,9 @@ export default function Index() {
             onPress={() => form.handleSubmit()}
           >
             <ButtonText style={{ fontFamily: "FrutigerArabicBold" }}>
-              Continue
+              متابعة
             </ButtonText>
           </Button>
-        </View>
-
-        <Button size="md" variant="solid" onPress={pickDocument}>
-          <Text>Upload</Text>
-        </Button>
-        <View>
-          {files.map((e, key) => (
-            <Text>
-              {e.name} {key}
-              <Button onPress={() => deleteDocument(key)}>
-                <ButtonText>Delete</ButtonText>
-              </Button>
-            </Text>
-          ))}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -246,10 +259,13 @@ const styles = StyleSheet.create({
     marginTop: 24,
     gap: 12,
     alignSelf: "center",
+    alignItems: "center",
   },
   fieldRow: {
-    width: "100%",
+    width: 300,
+    alignSelf: "center",
   },
+
   inputFull: {
     width: "100%",
   },
@@ -270,6 +286,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     fontFamily: "FrutigerArabicBold",
     marginBottom: 6,
+    fontSize: 14,
   },
   buttons: {
     flexDirection: "row",
@@ -278,4 +295,14 @@ const styles = StyleSheet.create({
     marginBottom: 18,
     justifyContent: "center",
   },
+  fileContainer: {
+    flexDirection: "row",
+    fontSize: 4,
+  },
+  fileInnerContainer: {
+    borderRadius: 8,
+    backgroundColor: "#737373",
+    fontSize: 8,
+  },
+  deleteFileButton: {},
 });

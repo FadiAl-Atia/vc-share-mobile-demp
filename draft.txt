@@ -13,3 +13,102 @@
             variant="outline"
           ></InputField>
         </Input>
+
+
+
+         form: {
+    direction: "rtl",
+    writingDirection: "rtl",
+    marginTop: 24,
+    gap: 12,
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  inputButtonRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    width: "100%",
+  },
+  inputContainer: {
+    width: "70%",
+  },
+  dateButton: {
+    minWidth: 50,
+    backgroundColor: "#2AB25F",
+  },
+  fieldRow: {
+    width: 500,
+    alignSelf: "center",
+  },
+  inputFull: {
+    width: "90%",
+  },
+  textRTL: {
+    textAlign: "right",
+    writingDirection: "rtl",
+    fontFamily: "FrutigerArabicRoman",
+  },
+  labelStyle: {
+    fontFamily: "FrutigerArabicBold",
+    marginBottom: 6,
+    fontSize: 14,
+  },
+  buttons: {
+    flexDirection: "row",
+    gap: 38,
+    marginTop: 14,
+    marginBottom: 18,
+    justifyContent: "center",
+  },
+
+
+
+  <Label style={styles.labelStyle}>التاريخ</Label>
+        <View style={styles.inputButtonRow}>
+          <Input style={styles.inputContainer}>
+            <InputField
+              placeholder={date.toString()}
+              style={[styles.inputFull, styles.textRTL]}
+            ></InputField>
+          </Input>
+          <Button onPress={showDatepicker} style={styles.dateButton}>
+            <ButtonText>
+              <Svg width="19" height="18" viewBox="0 0 19 18" fill="none">
+                <Path
+                  d="M2.75 9C2.75 5.81802 2.75 4.97703 3.73851 3.98851C4.72703 3 6.31802 3 9.5 3C12.682 3 14.273 3 15.2615 3.98851C16.25 4.97703 16.25 5.81802 16.25 9C16.25 12.182 16.25 13.773 15.2615 14.7615C14.273 15.75 12.682 15.75 9.5 15.75C6.31802 15.75 4.72703 15.75 3.73851 14.7615C2.75 13.773 2.75 12.182 2.75 9Z"
+                  stroke="white"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <Path
+                  d="M2.9375 6H16.0625"
+                  stroke="white"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <Path
+                  d="M12.875 3.75V2.25"
+                  stroke="white"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <Path
+                  d="M6.125 3.75V2.25"
+                  stroke="white"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </Svg>
+            </ButtonText>
+          </Button>
+        </View>
+
+        <Button onPress={showTimepicker} />
+        <Text>selected: {date.toLocaleString()}</Text>
