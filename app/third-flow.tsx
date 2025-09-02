@@ -1,11 +1,15 @@
 import { Button, ButtonText } from "@/components/ui/button";
+import { composeReservationDate } from "@/models/user-time";
 import { Label } from "@react-navigation/elements";
+import { addHours, startOfDay } from "date-fns";
 import dayjs from "dayjs";
 import "dayjs/locale/ar";
-import React, { useState } from "react";
+import { router } from "expo-router";
+import React, { useMemo, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   useWindowDimensions,
@@ -14,8 +18,11 @@ import {
 import DateTimePicker from "react-native-modal-datetime-picker";
 import Svg, { Path } from "react-native-svg";
 import { Input, InputField } from "../components/ui/input";
-
+import { useAvailableTime } from "../hooks/useAvailableTime";
+import type { UiTimeSlot } from "../models/TimeSlot";
+import { TimeSlots } from "./timeSlots";
 export default function Index() {
+  //Days of the week
   const daysOfTheWeekAr = new Map();
   daysOfTheWeekAr.set(0, "الأحد");
   daysOfTheWeekAr.set(1, "الاثنين");
@@ -24,21 +31,19 @@ export default function Index() {
   daysOfTheWeekAr.set(4, "الخميس");
   daysOfTheWeekAr.set(5, "الجمعة");
   daysOfTheWeekAr.set(6, "السبت");
-  //   dayjs.locale("ar");
 
-  const formatDate = (dateObj: Date) => {
-    const day = dateObj.getDate();
-    const month = dateObj.getMonth() + 1; // Months are 0-indexed
-    const year = dateObj.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
-  const screenWidth = useWindowDimensions();
-  const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState(new Date().getTime());
-
+  //States
+  const [date, setDate] = useState<Date | null>(null);
+  const [time, setTime] = useState<Date | null>(null);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isTimePickerVisible, setTimePickerVisiblity] = useState(false);
+  const [isSubmitButtonPressed, setSubmitButtonPressed] = useState(false);
 
+  //Hooks
+  const screenWidth = useWindowDimensions();
+  const availabilities = useAvailableTime();
+
+  //Date & Time Picker Methods
   const showDatePicker = () => {
     setDatePickerVisibility(true);
   };
@@ -58,19 +63,47 @@ export default function Index() {
     setTime(time);
     hideTimePicker();
   };
-  const handleConfirm = (date: Date) => {
-    console.warn("A date has been picked: ", date);
-    setDate(date);
+  const handleDateConfirm = (date: Date) => {
+    console.log("A date has been picked: ", date);
+    const newDate = startOfDay(date);
+    setDate(addHours(newDate, 8));
     hideDatePicker();
   };
-
-  const [showPicker, setShowPicker] = useState(false);
-
-  const onChange = (event: any, selectedDate?: Date) => {
-    if (selectedDate) {
-      setDate(selectedDate);
-    }
+  const handleSubmitButton = () => {
+    setSubmitButtonPressed(true);
   };
+
+  //Time Slot Methods
+  const timeSlots = useMemo(() => {
+    if (!date) return [] as UiTimeSlot[];
+    return availabilities?.map((slot) => {
+      return {
+        dateTime: composeReservationDate({
+          scheduledDate: date,
+          minutesFrom: slot.startTime,
+        }),
+        ...slot,
+      } satisfies UiTimeSlot;
+    });
+  }, [availabilities, date]);
+
+  const formatDate = (dateObj: Date) => {
+    const day = dateObj.getDate();
+    const month = dateObj.getMonth() + 1; // Months are 0-indexed
+    const year = dateObj.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+  const [selectedSlot, setSelectedSlot] = useState<UiTimeSlot | undefined>();
+
+  //Delete this after test
+  function testSelectedSlot(slot: UiTimeSlot) {
+    setSelectedSlot(slot);
+    composeReservationDate({
+      scheduledDate: slot.dateTime,
+      minutesFrom: slot.startTime,
+    });
+    console.log(slot.dateTime);
+  }
 
   return (
     <KeyboardAvoidingView
@@ -120,17 +153,21 @@ export default function Index() {
                   </Svg>
                 </ButtonText>
               </Button>
-              <Input style={styles.input} isDisabled={true}>
+              <Input style={[styles.input, { pointerEvents: "none" }]}>
                 <InputField
-                  placeholder={`${daysOfTheWeekAr.get(
-                    dayjs(date).get("d")
-                  )} - ${formatDate(date)}`}
+                  placeholder={
+                    date
+                      ? `${daysOfTheWeekAr.get(
+                          dayjs(date).get("d")
+                        )} - ${formatDate(date)}`
+                      : "يرجى اختيار التاريخ"
+                  }
                   style={styles.inputField}
                 ></InputField>
                 <DateTimePicker
                   isVisible={isDatePickerVisible}
                   mode="date"
-                  onConfirm={handleConfirm}
+                  onConfirm={handleDateConfirm}
                   onCancel={hideDatePicker}
                   locale="ar"
                 />
@@ -151,16 +188,19 @@ export default function Index() {
                 </ButtonText>
               </Button>
               {/*Time picker is choosing today's date, but I fetched the time only. */}
-              <Input style={styles.input} isDisabled={true}>
+              <Input style={[styles.input, { pointerEvents: "none" }]}>
                 <InputField
-                  placeholder={`${dayjs(time).get("h")}:${dayjs(time).get(
-                    "m"
-                  )}  `}
+                  placeholder={
+                    time
+                      ? `${dayjs(time).get("h")}:${dayjs(time).get("m")}`
+                      : "يرجى اختيار الوقت"
+                  }
                   style={styles.inputField}
                 ></InputField>
                 <DateTimePicker
                   isVisible={isTimePickerVisible}
                   mode="time"
+                  is24Hour={true}
                   onConfirm={handleTimeConfirm}
                   onCancel={hideTimePicker}
                   locale="ar"
@@ -194,12 +234,37 @@ export default function Index() {
           variant="solid"
           action="primary"
           style={{ backgroundColor: "#2AB25F" }}
+          onPress={handleSubmitButton}
         >
           <ButtonText style={{ fontFamily: "FrutigerArabicBold" }}>
             متابعة
           </ButtonText>
         </Button>
       </View>
+      {isSubmitButtonPressed && (!date || !time) && (
+        <Text style={{ color: "red" }}>يرجى تحديد الموعد</Text>
+      )}
+
+      <Text>For Debugging:</Text>
+      <Text>{date ? date.toString() : ""}</Text>
+      <Text>{time ? time.toTimeString() : ""}</Text>
+      <Button
+        onPress={() => {
+          router.push("/test-modal");
+        }}
+      >
+        <ButtonText>Open Modal</ButtonText>
+      </Button>
+      <ScrollView style={styles.slot}>
+        {date && (
+          <TimeSlots
+            isPending={false}
+            timeSlots={timeSlots as UiTimeSlot[]}
+            selectedSlot={selectedSlot}
+            onSelectSlot={testSelectedSlot}
+          />
+        )}
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -261,5 +326,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 18,
     justifyContent: "center",
+  },
+  slot: {
+    flexWrap: "wrap",
+    width: 300,
+    marginBottom: 80,
   },
 });
