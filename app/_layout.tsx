@@ -17,6 +17,10 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="second-flow" options={{ title: "secondFlow" }} />
+        <Stack.Screen
+          name="third-flow"
+          options={{ title: "Choose Time" }}
+        ></Stack.Screen>
       </Stack>
     </GluestackUIProvider>
   );

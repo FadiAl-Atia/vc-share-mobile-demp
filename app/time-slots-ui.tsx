@@ -18,7 +18,7 @@ export default function ExampleModal() {
     const value = await AsyncStorage.getItem("date-picked");
     if (value) {
       setDate(new Date(value));
-      await AsyncStorage.removeItem("date-picked");
+      // await AsyncStorage.removeItem("date-picked");
     }
   };
 
@@ -49,8 +49,8 @@ export default function ExampleModal() {
 
   const handleSlotSelection = async (slot: UiTimeSlot) => {
     setSelectedSlot(slot);
-    await AsyncStorage.removeItem("time-picked");
-    await AsyncStorage.setItem("time-picked", slot.dateTime.toString());
+    // await AsyncStorage.removeItem("time-picked");
+    await AsyncStorage.setItem("time-picked", slot.dateTime.toISOString());
   };
 
   const handleConfirm = () => {

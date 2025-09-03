@@ -1,5 +1,6 @@
 import { Button, ButtonText } from "@/components/ui/button";
 import { Input, InputField } from "@/components/ui/input";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Label } from "@react-navigation/elements";
 import { useForm } from "@tanstack/react-form";
 import * as DocumentPicker from "expo-document-picker";
@@ -38,6 +39,8 @@ export default function Index() {
       .nullable(),
   });
 
+  type form = z.infer<typeof formSchema>;
+
   //Documents Methods
   const pickDocument = async () => {
     const response = await DocumentPicker.getDocumentAsync({
@@ -54,14 +57,15 @@ export default function Index() {
   //Form Hook
   const form = useForm({
     defaultValues: {
-      name: "محمد علي",
-      age: "18",
-      sex: "ذكر",
-      symptopms: "اعاني من ارتفاع في درجة الحرارة و الم في الحلق ",
+      name: "",
+      age: "",
+      sex: "",
+      symptopms: "",
       document: null as DocumentPicker.DocumentPickerAsset[] | null,
     },
-    onSubmit: ({ value }) => {
+    onSubmit: async ({ value }) => {
       console.log(value);
+      await AsyncStorage.setItem("formData", JSON.stringify(value));
       router.push("/third-flow");
     },
     validators: {
@@ -183,19 +187,28 @@ export default function Index() {
         >
           PDF, PNG, JPG
         </Text>
-        <View>
+        <View style={styles.outerContainer}>
           {document.map((e, key) => (
-            <View style={styles.fileContainer}>
+            <View style={styles.fileContainer} key={key}>
               <View style={styles.fileInnerContainer}>
-                <Text>
+                <Text
+                  style={{ fontFamily: "FrutigerArabicBold", color: "#2AB25F" }}
+                >
                   {e.name}
-                  <Button
-                    onPress={() => deleteDocument(key)}
-                    style={styles.deleteFileButton}
-                  >
-                    <ButtonText>x</ButtonText>
-                  </Button>
                 </Text>
+                <Button
+                  onPress={() => deleteDocument(key)}
+                  style={{ backgroundColor: "#2AB25F" }}
+                >
+                  <ButtonText
+                    style={{
+                      fontFamily: "FrutigerArabicBold",
+                      color: "white",
+                    }}
+                  >
+                    حذف
+                  </ButtonText>
+                </Button>
               </View>
             </View>
           ))}
@@ -301,8 +314,11 @@ const styles = StyleSheet.create({
   },
   fileInnerContainer: {
     borderRadius: 8,
-    backgroundColor: "#737373",
     fontSize: 8,
+    flexDirection: "row",
+    gap: 15,
   },
-  deleteFileButton: {},
+  outerContainer: {
+    gap: 10,
+  },
 });

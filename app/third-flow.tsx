@@ -61,24 +61,20 @@ export default function Index() {
     setTimePickerVisiblity(false);
   };
 
-  const handleTimeConfirm = async (selectedTime: Date) => {
-    setTime(selectedTime);
-    // Store the time for later use
-    await AsyncStorage.setItem("time-picked", selectedTime.toString());
-    hideTimePicker();
-  };
-
   const handleDateConfirm = async (selectedDate: Date) => {
     console.log("A date has been picked: ", selectedDate);
     const newDate = startOfDay(selectedDate);
     setDate(newDate);
-    await AsyncStorage.removeItem("date-picked");
+    // await AsyncStorage.removeItem("date-picked");
     await AsyncStorage.setItem("date-picked", newDate.toString()); //The date must be sent to the modal, so we can retreive the slots.
     hideDatePicker();
   };
 
   const handleSubmitButton = () => {
     setSubmitButtonPressed(true);
+    if (date && time) {
+      router.push("/fourth-flow");
+    }
   };
 
   //Time Slot Methods
@@ -119,12 +115,12 @@ export default function Index() {
     const storedTime = await AsyncStorage.getItem("time-picked");
     if (storedTime) {
       setTime(new Date(storedTime));
-      await AsyncStorage.removeItem("time-picked");
+      // await AsyncStorage.removeItem("time-picked");
     }
   };
 
   useEffect(() => {
-    getTimeFromStorage();
+    AsyncStorage.setItem("time-picked", "");
   }, []);
 
   //This is necessary, because if you dont write it, the getTimeFromStorage will only execute once, even if the user goes to modal and comes back.
@@ -214,7 +210,12 @@ export default function Index() {
             </View>
             <Label style={styles.labelStyle}>الساعة</Label>
             <View style={styles.inputContainer}>
-              <Button style={styles.dateButton} onPress={showTimePicker}>
+              <Button
+                style={styles.dateButton}
+                onPress={() => {
+                  router.push("/time-slots-ui");
+                }}
+              >
                 <ButtonText>
                   <Svg
                     width="19"
@@ -231,14 +232,6 @@ export default function Index() {
                   placeholder={time ? formatTime(time) : "يرجى اختيار الوقت"}
                   style={styles.inputField}
                   value={time ? formatTime(time) : ""}
-                />
-                <DateTimePicker
-                  isVisible={isTimePickerVisible}
-                  mode="time"
-                  is24Hour={true}
-                  onConfirm={handleTimeConfirm}
-                  onCancel={hideTimePicker}
-                  locale="ar"
                 />
               </Input>
             </View>
@@ -279,14 +272,6 @@ export default function Index() {
       {isSubmitButtonPressed && (!date || !time) && (
         <Text style={{ color: "red" }}>يرجى تحديد الموعد</Text>
       )}
-
-      <Button
-        onPress={() => {
-          router.push("/test-modal");
-        }}
-      >
-        <ButtonText>Open Modal</ButtonText>
-      </Button>
     </KeyboardAvoidingView>
   );
 }
