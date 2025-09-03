@@ -1,15 +1,14 @@
 import { Button, ButtonText } from "@/components/ui/button";
 import { composeReservationDate } from "@/models/user-time";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Label } from "@react-navigation/elements";
-import { addHours, startOfDay } from "date-fns";
-import dayjs from "dayjs";
+import { format, startOfDay } from "date-fns";
 import "dayjs/locale/ar";
-import { router } from "expo-router";
-import React, { useMemo, useState } from "react";
+import { router, useNavigation } from "expo-router";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
   useWindowDimensions,
@@ -20,7 +19,7 @@ import Svg, { Path } from "react-native-svg";
 import { Input, InputField } from "../components/ui/input";
 import { useAvailableTime } from "../hooks/useAvailableTime";
 import type { UiTimeSlot } from "../models/TimeSlot";
-import { TimeSlots } from "./timeSlots";
+
 export default function Index() {
   //Days of the week
   const daysOfTheWeekAr = new Map();
@@ -38,10 +37,12 @@ export default function Index() {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isTimePickerVisible, setTimePickerVisiblity] = useState(false);
   const [isSubmitButtonPressed, setSubmitButtonPressed] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState<UiTimeSlot | undefined>();
 
   //Hooks
   const screenWidth = useWindowDimensions();
   const availabilities = useAvailableTime();
+  const navigation = useNavigation();
 
   //Date & Time Picker Methods
   const showDatePicker = () => {
@@ -59,16 +60,23 @@ export default function Index() {
   const hideTimePicker = () => {
     setTimePickerVisiblity(false);
   };
-  const handleTimeConfirm = (time: any) => {
-    setTime(time);
+
+  const handleTimeConfirm = async (selectedTime: Date) => {
+    setTime(selectedTime);
+    // Store the time for later use
+    await AsyncStorage.setItem("time-picked", selectedTime.toString());
     hideTimePicker();
   };
-  const handleDateConfirm = (date: Date) => {
-    console.log("A date has been picked: ", date);
-    const newDate = startOfDay(date);
-    setDate(addHours(newDate, 8));
+
+  const handleDateConfirm = async (selectedDate: Date) => {
+    console.log("A date has been picked: ", selectedDate);
+    const newDate = startOfDay(selectedDate);
+    setDate(newDate);
+    await AsyncStorage.removeItem("date-picked");
+    await AsyncStorage.setItem("date-picked", newDate.toString()); //The date must be sent to the modal, so we can retreive the slots.
     hideDatePicker();
   };
+
   const handleSubmitButton = () => {
     setSubmitButtonPressed(true);
   };
@@ -89,21 +97,45 @@ export default function Index() {
 
   const formatDate = (dateObj: Date) => {
     const day = dateObj.getDate();
-    const month = dateObj.getMonth() + 1; // Months are 0-indexed
+    const month = dateObj.getMonth() + 1;
     const year = dateObj.getFullYear();
     return `${day}/${month}/${year}`;
   };
-  const [selectedSlot, setSelectedSlot] = useState<UiTimeSlot | undefined>();
 
-  //Delete this after test
-  function testSelectedSlot(slot: UiTimeSlot) {
-    setSelectedSlot(slot);
-    composeReservationDate({
-      scheduledDate: slot.dateTime,
-      minutesFrom: slot.startTime,
+  const formatTime = (timeObj: Date) => {
+    return format(timeObj, "HH:mm");
+  };
+
+  const clearAllData = async () => {
+    try {
+      await AsyncStorage.clear();
+      console.log("AsyncStorage cleared successfully!");
+    } catch (e) {
+      console.error("Error clearing AsyncStorage:", e);
+    }
+  };
+
+  const getTimeFromStorage = async () => {
+    const storedTime = await AsyncStorage.getItem("time-picked");
+    if (storedTime) {
+      setTime(new Date(storedTime));
+      await AsyncStorage.removeItem("time-picked");
+    }
+  };
+
+  useEffect(() => {
+    getTimeFromStorage();
+  }, []);
+
+  //This is necessary, because if you dont write it, the getTimeFromStorage will only execute once, even if the user goes to modal and comes back.
+  useEffect(() => {
+    //The focus listener below listens when page comes to focus again.
+    const unsubscribe = navigation.addListener("focus", () => {
+      getTimeFromStorage();
     });
-    console.log(slot.dateTime);
-  }
+
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <KeyboardAvoidingView
@@ -157,13 +189,20 @@ export default function Index() {
                 <InputField
                   placeholder={
                     date
-                      ? `${daysOfTheWeekAr.get(
-                          dayjs(date).get("d")
-                        )} - ${formatDate(date)}`
+                      ? `${daysOfTheWeekAr.get(date.getDay())} - ${formatDate(
+                          date
+                        )}`
                       : "يرجى اختيار التاريخ"
                   }
                   style={styles.inputField}
-                ></InputField>
+                  value={
+                    date
+                      ? `${daysOfTheWeekAr.get(date.getDay())} - ${formatDate(
+                          date
+                        )}`
+                      : ""
+                  }
+                />
                 <DateTimePicker
                   isVisible={isDatePickerVisible}
                   mode="date"
@@ -187,16 +226,12 @@ export default function Index() {
                   </Svg>
                 </ButtonText>
               </Button>
-              {/*Time picker is choosing today's date, but I fetched the time only. */}
               <Input style={[styles.input, { pointerEvents: "none" }]}>
                 <InputField
-                  placeholder={
-                    time
-                      ? `${dayjs(time).get("h")}:${dayjs(time).get("m")}`
-                      : "يرجى اختيار الوقت"
-                  }
+                  placeholder={time ? formatTime(time) : "يرجى اختيار الوقت"}
                   style={styles.inputField}
-                ></InputField>
+                  value={time ? formatTime(time) : ""}
+                />
                 <DateTimePicker
                   isVisible={isTimePickerVisible}
                   mode="time"
@@ -245,9 +280,6 @@ export default function Index() {
         <Text style={{ color: "red" }}>يرجى تحديد الموعد</Text>
       )}
 
-      <Text>For Debugging:</Text>
-      <Text>{date ? date.toString() : ""}</Text>
-      <Text>{time ? time.toTimeString() : ""}</Text>
       <Button
         onPress={() => {
           router.push("/test-modal");
@@ -255,16 +287,6 @@ export default function Index() {
       >
         <ButtonText>Open Modal</ButtonText>
       </Button>
-      <ScrollView style={styles.slot}>
-        {date && (
-          <TimeSlots
-            isPending={false}
-            timeSlots={timeSlots as UiTimeSlot[]}
-            selectedSlot={selectedSlot}
-            onSelectSlot={testSelectedSlot}
-          />
-        )}
-      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
