@@ -57,15 +57,16 @@ export default function Index() {
   //Form Hook
   const form = useForm({
     defaultValues: {
-      name: "",
-      age: "",
-      sex: "",
-      symptopms: "",
+      name: "Fadi",
+      age: "22",
+      sex: "Male",
+      symptopms: "sssssssssssssssssssssssssssss",
       document: null as DocumentPicker.DocumentPickerAsset[] | null,
     },
     onSubmit: async ({ value }) => {
       console.log(value);
       await AsyncStorage.setItem("formData", JSON.stringify(value));
+      await AsyncStorage.setItem("documents", JSON.stringify(value.document));
       router.push("/third-flow");
     },
     validators: {
@@ -305,7 +306,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 38,
     marginTop: 14,
-    marginBottom: 18,
+    marginBottom: 50,
     justifyContent: "center",
   },
   fileContainer: {

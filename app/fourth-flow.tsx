@@ -10,6 +10,7 @@ export default function Index() {
   const [time, setTime] = useState<Date | null>(null);
   const [date, setDate] = useState<Date | null>(null);
   const [formData, setFormData] = useState<form | null>(null);
+  
 
   const grabAllData = async () => {
     const timeGrabbed = await AsyncStorage.getItem("time-picked");

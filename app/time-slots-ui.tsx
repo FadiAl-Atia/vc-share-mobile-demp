@@ -84,12 +84,6 @@ export default function ExampleModal() {
             تأكيد
           </Text>
         </Pressable>
-        {/* Debug info - remove in production */}
-        {__DEV__ && (
-          <Text style={{ fontSize: 10, marginTop: 5 }}>
-            Date: {date ? formatDate(date) : "No date"}
-          </Text>
-        )}
       </View>
     </View>
   );
