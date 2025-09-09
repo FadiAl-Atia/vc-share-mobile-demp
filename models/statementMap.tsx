@@ -112,7 +112,46 @@ statementMap.set("WAITING", () => (
     ></Statement>
   </View>
 ));
-
+statementMap.set("ENDED", () => (
+  <View
+    style={{
+      alignSelf: "center",
+      width: "100%",
+    }}
+  >
+    <Text
+      style={{
+        alignSelf: "flex-end",
+        color: "#2B7FFF",
+        fontFamily: "FrutigerArabicBold",
+        textDecorationLine: "underline",
+      }}
+    >
+      تحميل الوصفة الطبية
+    </Text>
+    <Statement
+      text="انتهى الموعد بتاريخ: الثلاثاء - 25/3/2025 - 2:30PM"
+      statementStyles={{
+        width: "100%",
+        padding: 4,
+        borderWidth: 1,
+        borderColor: "#62748E",
+        borderRadius: 8,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 5,
+      }}
+      statementTextStyle={{
+        fontFamily: "FrutigerArabicBold",
+        color: "#62748E",
+        textAlign: "center",
+        fontSize: 13,
+        alignSelf: "center",
+      }}
+    ></Statement>
+  </View>
+));
 export default statementMap;
 
 const styles = StyleSheet.create({

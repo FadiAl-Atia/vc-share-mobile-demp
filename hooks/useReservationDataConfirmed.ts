@@ -11,7 +11,7 @@ export default function useReservationDataConfirmed() {
     scheduledDate: "2025-09-27T16:00:00.000Z",
     minutesFrom: 570,
     minutesTo: 600,
-    status: "WAITING",
+    status: "ENDED",
     createdAt: "2025-08-31T16:37:54.695Z",
     updatedAt: "2025-08-31T17:26:15.903Z",
     user: {
@@ -53,6 +53,15 @@ export default function useReservationDataConfirmed() {
     },
     files: [],
     timeline: [
+      {
+        id: "11119e00-742a-4762-958b-4dfb156d5fa3",
+        reservationId: "81cf18f1-1075-42cd-b201-81ebcb45f17b",
+        type: "REPORT_ATTACHED",
+        context: '{"files":["44ebcf26-5667-4640-9d01-bbac4f036ec5"]}',
+        source: "DOCTOR",
+        createdAt: "2025-09-09T09:30:32.417Z",
+        createdBy: "FPKcwaUuVWeOzpH1SlEm3i9nE1N2",
+      },
       {
         id: "bff5ed3e-165f-4882-974c-0655567b9e9b",
         reservationId: "a97feb60-d97f-4b94-989d-6174936d788c",

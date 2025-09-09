@@ -9,11 +9,16 @@ import serviceTypeMap from "@/models/serviceTypeMap";
 import statementMap from "@/models/statementMap";
 import movementSvgMap from "@/models/timelineMapSvg";
 import movementTitleMap from "@/models/timelineMapTitle";
+import { useFonts } from "expo-font";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 export default function Index() {
-  const movementData = useReservationDataConfirmed();
-
+  const data = useReservationDataConfirmed();
+  const [loaded] = useFonts({
+    FrutigerArabicLight: require("../assets/fonts/FrutigerLTArabic45Light.ttf"),
+    FrutigerArabicRoman: require("../assets/fonts/FrutigerLTArabic55Roman.ttf"),
+    FrutigerArabicBold: require("../assets/fonts/FrutigerLTArabic65Bold.ttf"),
+  });
   return (
     <ScrollView
       style={{ flex: 1 }}
@@ -30,32 +35,28 @@ export default function Index() {
           marginRight: 25,
         }}
       >
-        {`الموعد رقم #${movementData.reservationNumber}`}
+        {`الموعد رقم #${data.reservationNumber}`}
       </Text>
 
       {/* First Container - Appointment Details */}
       <ReservationInfo
-        reservationNumber={movementData.reservationNumber}
-        createdAt={movementData.createdAt}
-        doctorName={
-          movementData.doctor.firstName + " " + movementData.doctor.lastName
-        }
-        serviceType={serviceTypeMap.get(movementData.service.name)}
-        speciality={movementData.speciality.name}
-        status={statusMap.get(movementData.status)?.()}
-        statement={statementMap.get(movementData.status)?.()}
+        reservationNumber={data.reservationNumber}
+        createdAt={data.createdAt}
+        doctorName={data.doctor.firstName + " " + data.doctor.lastName}
+        serviceType={serviceTypeMap.get(data.service.name)}
+        speciality={data.speciality.name}
+        status={statusMap.get(data.status)?.()}
+        statement={statementMap.get(data.status)?.()}
       ></ReservationInfo>
       {/* **************************************************************************************************************** */}
       {/* Second */}
       <ReservationAttachedFiles
         patientName={
-          movementData.user.profile.firstName +
-          " " +
-          movementData.user.profile.lastName
+          data.user.profile.firstName + " " + data.user.profile.lastName
         }
         patientAge={30}
-        patientSex={movementData.user.profile.gender}
-        speciality={movementData.speciality.name}
+        patientSex={data.user.profile.gender}
+        speciality={data.speciality.name}
       ></ReservationAttachedFiles>
       {/* **************************************************************************************************************** */}
       {/* Third */}
@@ -66,7 +67,7 @@ export default function Index() {
         <View style={styles.container_1_title_status}>
           <View style={{ flexDirection: "row", gap: 5 }}>
             <Text style={{ fontFamily: "FrutigerArabicBlack", fontSize: 18 }}>
-              الحركات
+              Test
             </Text>
             <Svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <Path
@@ -114,16 +115,14 @@ export default function Index() {
             </Svg>
           </View>
         </View>
-        {movementData.timeline.map((movement, index) => {
-          const finalDescriptionValue = descriptionMap.get(movement.type); //Confirmed
+        {data.timeline.map((movement, index) => {
+          const finalDescriptionValue = descriptionMap.get(movement); //Confirmed
           let description = "";
           if (typeof finalDescriptionValue === "function") {
             if (movement.type === "REPORT_ATTACHED") {
-              console.log("hi");
-              description = finalDescriptionValue(movement.id);
+              description = finalDescriptionValue(movement.type);
             } else {
-              console.log("whats");
-              description = finalDescriptionValue(movementData);
+              description = finalDescriptionValue(movement.context);
             }
           } else {
             description = finalDescriptionValue;
@@ -132,7 +131,7 @@ export default function Index() {
           const appointmentCreatedTitle = movementTitleMap.get(movement.type);
           let title = "";
           if (typeof appointmentCreatedTitle === "function") {
-            title = appointmentCreatedTitle(movementData);
+            title = appointmentCreatedTitle(data);
           } else {
             title = appointmentCreatedTitle;
           }
@@ -142,7 +141,7 @@ export default function Index() {
               key={index}
               title={title}
               movementSvg={movementSvgMap.get(movement.type)}
-              isLast={index === movementData.timeline.length - 1}
+              isLast={index === data.timeline.length - 1}
               description={description}
             />
           );

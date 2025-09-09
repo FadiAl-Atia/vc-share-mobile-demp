@@ -15,5 +15,8 @@ descriptionMap.set(
 descriptionMap.set("APPOINTMENT_CONFIRMED_BY_DOCTOR", (timelineObject: any) => {
   return `${timelineObject.createdAt}`;
 });
+descriptionMap.set("REPORT_ATTACHED", (timeLineObject: any) => {
+  return `${JSON.stringify(timeLineObject)} hi`;
+});
 
 export default descriptionMap;

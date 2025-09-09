@@ -5,5 +5,6 @@ movementTitleMap.set("DOCTOR_ASSIGNED", "تم تحديد طبيب للحالة")
 movementTitleMap.set("RESERVATION_CREATED", (timelineData: any) => {
   return `تم إنشاء موعد #${timelineData.reservationNumber}`;
 });
+movementTitleMap.set("REPORT_ATTACHED", "تم ارفاق ملف");
 
 export default movementTitleMap;

@@ -39,6 +39,14 @@ statusMap.set("WAITING", () => (
     <Text style={{ color: "#FF6900" }}>قيد الانتظار</Text>
   </View>
 ));
+statusMap.set("ENDED", () => (
+  <View style={[styles.status, { borderColor: "#2B7FFF" }]}>
+    <Svg height="8" width="8">
+      <Circle cx={4} cy={4} r={4} fill="#2B7FFF" />
+    </Svg>
+    <Text style={{ color: "#2B7FFF" }}>منتهي</Text>
+  </View>
+));
 
 export default statusMap;
 

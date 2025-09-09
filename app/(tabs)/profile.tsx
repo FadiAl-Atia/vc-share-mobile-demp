@@ -23,6 +23,9 @@ export default function Index() {
       <Button onPress={() => router.push("/waitingStatus")}>
         <ButtonText>Go to Waiting</ButtonText>
       </Button>
+      <Button onPress={() => router.push("/endedStatus")}>
+        <ButtonText>Go to Ended</ButtonText>
+      </Button>
     </View>
   );
 }

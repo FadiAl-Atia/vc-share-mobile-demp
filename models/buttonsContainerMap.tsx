@@ -1,4 +1,5 @@
 import alarmIcon from "@/assets/icons/alarmSvg";
+import checkCircleIcon from "@/assets/icons/check-circle";
 import fileIcon from "@/assets/icons/filesSVg";
 import leftArrowIcon from "@/assets/icons/leftArrowSvg";
 import trashIcon from "@/assets/icons/trashSvg";
@@ -109,6 +110,26 @@ buttonMap.set("WAITING", () => {
         buttonSvg={trashIcon}
         onPressButton={cancelreservation}
         variant="outline"
+      />
+    </View>
+  );
+});
+
+buttonMap.set("ENDED", () => {
+  return (
+    <View style={styles.buttonContainer}>
+      <ReservationButton
+        buttonText="تم اغلاق الحالة بنجاح بتاريخ : 10/4/2025"
+        buttonStyles={{
+          backgroundColor: "#2B7FFF",
+        }}
+        buttonTextStyle={{
+          fontFamily: "FrutigerArabicBold",
+          color: "white",
+        }}
+        buttonSvg={checkCircleIcon}
+        onPressButton={() => ""}
+        variant="solid"
       />
     </View>
   );
