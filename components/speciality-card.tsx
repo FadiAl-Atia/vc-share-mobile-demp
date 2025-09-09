@@ -12,11 +12,11 @@ export default function Card({
   description: string;
   cardId: string;
   isActive: boolean;
-  onPress: (cardId: string) => void;
+  onPress?: (cardId: string) => void;
 }) {
   //handle Press
   function handleSpecialityPress() {
-    onPress(cardId);
+    if (onPress) onPress(cardId);
   }
 
   //for svg of the specilaity
@@ -51,7 +51,12 @@ export default function Card({
           <View style={styles.innerLayout}>
             <View style={styles.innerTitle}>
               <Text
-                style={{ marginRight: 8, fontFamily: "FrutigerArabicBold" }}
+                style={{
+                  marginRight: 8,
+                  fontFamily: "FrutigerArabicBold",
+                  wordWrap: "break-word",
+                  flex: 1,
+                }}
               >
                 {name}
               </Text>
@@ -107,7 +112,6 @@ export default function Card({
 
 const styles = StyleSheet.create({
   layout: {
-    height: 110,
     width: "auto",
     borderColor: "#E2E8F0",
     borderWidth: 1,
@@ -121,10 +125,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   innerTitle: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row-reverse",
     fontSize: 17,
+    direction: "rtl",
+    width: "100%",
+    alignItems: "center",
   },
+
   circle: {
     height: 24,
     width: 24,

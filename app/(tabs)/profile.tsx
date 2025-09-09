@@ -1,5 +1,7 @@
+import { Button, ButtonText } from "@/components/ui/button";
 import { useFonts } from "expo-font";
-import { StyleSheet, Text, View } from "react-native";
+import { router } from "expo-router";
+import { StyleSheet, View } from "react-native";
 
 export default function Index() {
   const [loaded] = useFonts({
@@ -12,7 +14,15 @@ export default function Index() {
 
   return (
     <View style={styles.layout}>
-      <Text>This is a profile page</Text>
+      <Button onPress={() => router.push("/cancelledStatus")}>
+        <ButtonText>Go to Cancelled</ButtonText>
+      </Button>
+      <Button onPress={() => router.push("/needMoreFiles")}>
+        <ButtonText>Go to Request More Files</ButtonText>
+      </Button>
+      <Button onPress={() => router.push("/waitingStatus")}>
+        <ButtonText>Go to Waiting</ButtonText>
+      </Button>
     </View>
   );
 }
@@ -22,6 +32,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    gap: 12,
   },
   fontHeading: {
     fontFamily: "FrutigerArabicBold",

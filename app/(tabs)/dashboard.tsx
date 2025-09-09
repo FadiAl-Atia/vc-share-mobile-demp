@@ -1,27 +1,160 @@
-import { useFonts } from "expo-font";
-import { StyleSheet, Text, View } from "react-native";
-
+import Card from "@/components/speciality-card";
+import useLandingPageRecords from "@/hooks/useLandingPageSpecialities";
+import { router } from "expo-router";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import Svg, { Path } from "react-native-svg";
 export default function Index() {
-  const [loaded] = useFonts({
-    FrutigerArabicLight: require("../../assets/fonts/FrutigerLTArabic45Light.ttf"),
-    FrutigerArabicRoman: require("../../assets/fonts/FrutigerLTArabic55Roman.ttf"),
-    FrutigerArabicBold: require("../../assets/fonts/FrutigerLTArabic65Bold.ttf"),
-  });
-
-  if (!loaded) return null;
-
+  const landingPageSpecialities = useLandingPageRecords();
   return (
-    <View style={styles.layout}>
-      <Text>This is a dashboard page</Text>
-    </View>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <View style={styles.layout}>
+        <Text style={{ fontFamily: "FrutigerArabicBold", fontSize: 18 }}>
+          خيارات سريعة
+        </Text>
+        <View style={styles.scrollContainer}>
+          <ScrollView
+            horizontal
+            contentContainerStyle={styles.quickButtons}
+            showsHorizontalScrollIndicator={false}
+            contentOffset={{ x: 300, y: 0 }}
+          >
+            <View style={[styles.doctorReservation, styles.secondOpinion]}>
+              <Text
+                style={{
+                  fontFamily: "FrutigerArabicBold",
+                  fontSize: 18,
+                  color: "white",
+                }}
+              >
+                احصل على رأي طبي ثانٍ
+              </Text>
+              <Text
+                style={{
+                  fontFamily: "FrutigerArabicRoman",
+                  fontSize: 14,
+                  marginBottom: 8,
+                  color: "white",
+                }}
+              >
+                تأكد من تشخيصك مع أطباء متخصصين
+              </Text>
+              <Text
+                style={{
+                  fontFamily: "FrutigerArabicRoman",
+                  fontSize: 14,
+                  color: "white",
+                }}
+              >
+                لا تدع الشك يؤثر على قراراتك الصحية. احجز موعدًا مع أطباء ذوي
+                خبرة للحصول على رأي طبي ثانٍ موثوق يساعدك على اتخاذ القرار
+                الصحيح بشأن علاجك.
+              </Text>
+            </View>
+            <View style={styles.doctorReservation}>
+              <Text
+                style={{
+                  fontFamily: "FrutigerArabicBold",
+                  fontSize: 18,
+                  color: "white",
+                }}
+              >
+                احجز موعد مع طبيب
+              </Text>
+              <Text
+                style={{
+                  fontFamily: "FrutigerArabicRoman",
+                  fontSize: 14,
+                  marginBottom: 8,
+                  color: "white",
+                }}
+              >
+                احجز موعدك للحصول على استشارة طبية
+              </Text>
+              <Text
+                style={{
+                  fontFamily: "FrutigerArabicRoman",
+                  fontSize: 14,
+                  color: "white",
+                }}
+              >
+                احجز موعدك مع أفضل الأطباء في مختلف التخصصات خلال دقائق.
+                استشارات طبية موثوقة عبر الفيديو أو الدردشة النصية، متى احتجت
+                إليها ومن أي مكان.
+              </Text>
+            </View>
+          </ScrollView>
+        </View>
+        <View
+          style={{
+            flexDirection: "row-reverse",
+            gap: 8,
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ fontFamily: "FrutigerArabicBold", fontSize: 18 }}>
+            التخصصات
+          </Text>
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={() => router.push("/allSpecialities")}
+          >
+            <View style={styles.button}>
+              <Svg width="6" height="8" viewBox="0 0 5 8" fill="none">
+                <Path
+                  d="M4 7L1 4L4 1"
+                  stroke="#020618"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </Svg>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.specialities}>
+          {landingPageSpecialities.map((speciality, key) => {
+            return (
+              <Card
+                cardId={key.toString()}
+                description={speciality.description}
+                isActive={false}
+                name={speciality.name}
+                key={key}
+              />
+            );
+          })}
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  layout: {
-    flex: 1,
-    justifyContent: "center",
+  buttonContainer: {},
+  button: {
+    flexDirection: "row",
     alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: "white",
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#2AB25F",
+  },
+  container: {
+    flex: 1,
+  },
+  layout: {
+    alignItems: "flex-end",
+    paddingHorizontal: 30,
+    paddingVertical: 100,
+    paddingBottom: 50,
   },
   fontHeading: {
     fontFamily: "FrutigerArabicBold",
@@ -51,5 +184,35 @@ const styles = StyleSheet.create({
     gap: 38,
     marginTop: 14,
     marginBottom: 18,
+  },
+  doctorReservation: {
+    backgroundColor: "#21387E",
+    height: 200,
+    width: 290,
+    marginTop: 15,
+    borderRadius: 8,
+    marginLeft: 18,
+    padding: 15,
+    textAlign: "right",
+    direction: "rtl",
+  },
+  secondOpinion: {
+    backgroundColor: "#02B5E5",
+  },
+  scrollContainer: {
+    height: 230,
+    marginTop: 15,
+    marginBottom: 15,
+  },
+  quickButtons: {
+    flexDirection: "row",
+  },
+  specialities: {
+    width: "100%",
+    marginTop: 15,
+    gap: 15,
+  },
+  cardSpacing: {
+    marginBottom: 15,
   },
 });

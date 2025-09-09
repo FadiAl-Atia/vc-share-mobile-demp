@@ -125,7 +125,7 @@ export default function RootLayout() {
         }}
       />
       <Tabs.Screen
-        name="calendar"
+        name="reservationDetails"
         options={{
           title: "Calendar",
           tabBarIcon: ({ focused }) => (
@@ -207,7 +207,7 @@ export default function RootLayout() {
         }}
       />
       <Tabs.Screen
-        name="index"
+        name="chooseSpeciality"
         options={{
           title: "Home",
           tabBarIcon: ({ focused }) => (

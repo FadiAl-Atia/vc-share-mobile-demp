@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import specialityData from "../../assets/arrayData";
+import specialityData from "../../models/arrayData";
 
 export default function Index() {
   const InputFieldSearchIcon = () => (
@@ -51,7 +51,7 @@ export default function Index() {
   const handleSubmitButton = () => {
     selectedSpeciality ? setIsSubmitted(false) : setIsSubmitted(true);
     if (selectedSpeciality) {
-      router.push("/second-flow");
+      router.push("/reservationDetailsForm");
     }
   };
 
