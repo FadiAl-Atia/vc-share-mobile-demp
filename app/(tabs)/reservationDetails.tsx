@@ -9,6 +9,7 @@ import serviceTypeMap from "@/models/serviceTypeMap";
 import statementMap from "@/models/statementMap";
 import movementSvgMap from "@/models/timelineMapSvg";
 import movementTitleMap from "@/models/timelineMapTitle";
+import { differenceInYears } from "date-fns";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 export default function Index() {
@@ -53,7 +54,10 @@ export default function Index() {
           " " +
           movementData.user.profile.lastName
         }
-        patientAge={30}
+        patientAge={differenceInYears(
+          new Date(),
+          movementData.user.profile.birthDate
+        )}
         patientSex={movementData.user.profile.gender}
         speciality={movementData.speciality.name}
       ></ReservationAttachedFiles>
@@ -144,6 +148,7 @@ export default function Index() {
               movementSvg={movementSvgMap.get(movement.type)}
               isLast={index === movementData.timeline.length - 1}
               description={description}
+              createdAt={movementData.timeline[index].createdAt}
             />
           );
         })}

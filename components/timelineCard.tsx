@@ -1,3 +1,5 @@
+import { format, formatDistanceToNow } from "date-fns";
+import { arSA } from "date-fns/locale";
 import { ReactSVGElement } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Svg, { ClipPath, Defs, G, Path, Rect } from "react-native-svg";
@@ -6,6 +8,7 @@ interface MovementProps {
   title: string;
   movementSvg: ReactSVGElement;
   isLast: boolean;
+  createdAt: string;
   description: string;
 }
 
@@ -13,9 +16,14 @@ export default function ReservationInfo({
   title,
   movementSvg,
   isLast,
+  createdAt,
   description,
 }: MovementProps) {
   const { width: ScreenWidth } = useWindowDimensions();
+
+  // Parse the ISO string to Date object
+  const createdDate = new Date(createdAt);
+
   return (
     <View style={styles.movement}>
       <View style={styles.movementTitleAndSVG}>
@@ -27,7 +35,6 @@ export default function ReservationInfo({
               fontSize: 16,
               textAlign: "right",
               flex: 1,
-
               minWidth: 150,
             }}
           >
@@ -79,7 +86,7 @@ export default function ReservationInfo({
                 fontSize: 12,
               }}
             >
-              - 12/03/2025
+              {"- " + format(createdDate, "dd/MM/yyyy", { locale: arSA })}
             </Text>
             <Svg
               width={12}
@@ -115,7 +122,7 @@ export default function ReservationInfo({
                 fontSize: 12,
               }}
             >
-              12:30PM
+              {format(createdDate, "hh:mm a", { locale: arSA })}
             </Text>
           </View>
           <Text
@@ -125,7 +132,7 @@ export default function ReservationInfo({
               fontSize: 12,
             }}
           >
-            قبل 6 ساعات{" "}
+            منذ {formatDistanceToNow(createdDate, { locale: arSA })}
           </Text>
           <View style={styles.movementDescription}>
             <Text

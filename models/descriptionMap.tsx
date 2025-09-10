@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+import { arSA } from "date-fns/locale";
 const descriptionMap = new Map();
 
 descriptionMap.set("DOCTOR_ASSIGNED", (timelineObject: any) => {
@@ -13,7 +15,13 @@ descriptionMap.set(
 );
 
 descriptionMap.set("APPOINTMENT_CONFIRMED_BY_DOCTOR", (timelineObject: any) => {
-  return `${timelineObject.createdAt}`;
+  return `${` تم تأكيد الموعد: ${format(
+    new Date(timelineObject.scheduledDate),
+    "EEEE - dd/MM/yyyy - HH:mm",
+    {
+      locale: arSA,
+    }
+  )}`}`;
 });
 descriptionMap.set("REPORT_ATTACHED", (timeLineObject: any) => {
   return `${JSON.stringify(timeLineObject)} hi`;

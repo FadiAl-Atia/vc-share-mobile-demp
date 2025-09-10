@@ -6,13 +6,16 @@ import { useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
-
+import useReservationDataConfirmed from "@/hooks/useReservationDataConfirmed";
+import { differenceInYears } from "date-fns";
+import { arSA } from "date-fns/locale";
 interface reservationInfoProps {
   patientName: string;
   patientAge: number;
   patientSex: string;
   speciality: string;
 }
+const data = useReservationDataConfirmed();
 
 export default function ReservationAttachedFiles({
   patientName,

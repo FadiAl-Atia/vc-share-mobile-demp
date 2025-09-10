@@ -1,11 +1,21 @@
 import Statement from "@/components/statement";
+import useReservationDataConfirmed from "@/hooks/useReservationDataConfirmed";
+import { format } from "date-fns";
+import { arSA } from "date-fns/locale";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 const statementMap = new Map();
 
+const data = useReservationDataConfirmed();
 statementMap.set("CONFIRMED", () => (
   <Statement
-    text="وقت الموعد المؤكد: الأحد - 28/09/2025 - 12:00 م"
+    text={`وقت الموعد المؤكد: ${format(
+      new Date(data.scheduledDate),
+      "EEEE - dd/MM/yyyy - HH:mm",
+      {
+        locale: arSA,
+      }
+    )}`}
     statementStyles={{
       width: "100%",
       padding: 4,
