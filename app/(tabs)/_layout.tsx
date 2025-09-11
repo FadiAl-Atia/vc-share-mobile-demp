@@ -24,6 +24,7 @@ export default function RootLayout() {
           );
         },
       }}
+      initialRouteName="home"
     >
       <Tabs.Screen
         name="notifications"
@@ -78,7 +79,7 @@ export default function RootLayout() {
         }}
       />
       <Tabs.Screen
-        name="dashboard"
+        name="allSpecialities"
         options={{
           title: "Dashboard",
           tabBarIcon: ({ focused }) => (
@@ -127,7 +128,7 @@ export default function RootLayout() {
       <Tabs.Screen
         name="reservationDetails"
         options={{
-          title: "Calendar",
+          title: "Reservation",
           tabBarIcon: ({ focused }) => (
             <View style={focused ? styles.activeIcon : styles.inActiveIcon}>
               <Svg width={29} height={28} viewBox="0 0 29 28" fill="none">
@@ -207,7 +208,7 @@ export default function RootLayout() {
         }}
       />
       <Tabs.Screen
-        name="chooseSpeciality"
+        name="home"
         options={{
           title: "Home",
           tabBarIcon: ({ focused }) => (

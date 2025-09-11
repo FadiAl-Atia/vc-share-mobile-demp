@@ -1,4 +1,5 @@
 // app/example-modal.tsx
+import { TimeSlots } from "@/models/timeSlots";
 import { composeReservationDate } from "@/models/user-time";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import "dayjs/locale/ar";
@@ -7,7 +8,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useAvailableTime } from "../hooks/useAvailableTime";
 import type { UiTimeSlot } from "../models/TimeSlot";
-import { TimeSlots } from "./timeSlots";
 
 export default function ExampleModal() {
   const [date, setDate] = useState<Date | null>(null);

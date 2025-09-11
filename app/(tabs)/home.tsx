@@ -1,7 +1,12 @@
 import Card from "@/components/speciality-card";
+import SpecialityModal from "@/components/specialityModal";
 import useLandingPageRecords from "@/hooks/useLandingPageSpecialities";
+import Speciality from "@/models/Speciality";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
+import { useState } from "react";
 import {
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -10,7 +15,29 @@ import {
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
 export default function Index() {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const openModal = () => {
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
   const landingPageSpecialities = useLandingPageRecords();
+
+  const storeSpecialityInStorage = async (specilaity: Speciality) => {
+    await AsyncStorage.setItem("specialityModal", JSON.stringify(specilaity));
+    console.log(`Speciality : ${specilaity.name} has been stored`);
+    openModal();
+
+    const stored = await AsyncStorage.getItem("specialityModal");
+    console.log(`The current stored is ${stored}`);
+  };
+
+  const pressableFunction = () => {
+    console.log("A pressable");
+  };
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.layout}>
@@ -56,7 +83,10 @@ export default function Index() {
                 الصحيح بشأن علاجك.
               </Text>
             </View>
-            <View style={styles.doctorReservation}>
+            <TouchableOpacity
+              style={styles.doctorReservation}
+              onPress={() => router.push("/chooseSpeciality")}
+            >
               <Text
                 style={{
                   fontFamily: "FrutigerArabicBold",
@@ -87,7 +117,7 @@ export default function Index() {
                 استشارات طبية موثوقة عبر الفيديو أو الدردشة النصية، متى احتجت
                 إليها ومن أي مكان.
               </Text>
-            </View>
+            </TouchableOpacity>
           </ScrollView>
         </View>
         <View
@@ -120,17 +150,21 @@ export default function Index() {
         <View style={styles.specialities}>
           {landingPageSpecialities.map((speciality, key) => {
             return (
-              <Card
-                cardId={key.toString()}
-                description={speciality.description}
-                isActive={false}
-                name={speciality.name}
-                key={key}
-              />
+              <Pressable onPress={pressableFunction} key={key}>
+                <Card
+                  cardId={key.toString()}
+                  description={speciality.description}
+                  isActive={false}
+                  name={speciality.name}
+                  key={key}
+                  storeInStorage={() => storeSpecialityInStorage(speciality)}
+                />
+              </Pressable>
             );
           })}
         </View>
       </View>
+      <SpecialityModal visible={modalVisible} onClose={closeModal} />
     </ScrollView>
   );
 }

@@ -6,17 +6,21 @@ export default function Card({
   cardId,
   isActive,
   onPress,
+  storeInStorage,
   ...props
 }: {
   name: string;
   description: string;
   cardId: string;
   isActive: boolean;
+  storeInStorage?: () => void;
   onPress?: (cardId: string) => void;
 }) {
   //handle Press
   function handleSpecialityPress() {
     if (onPress) onPress(cardId);
+
+    if (storeInStorage) storeInStorage();
   }
 
   //for svg of the specilaity

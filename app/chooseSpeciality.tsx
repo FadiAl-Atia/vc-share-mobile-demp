@@ -1,3 +1,4 @@
+import specialityData from "@/assets/arrayData";
 import Card from "@/components/speciality-card";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
@@ -11,8 +12,6 @@ import {
   View,
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import specialityData from "../../models/arrayData";
-
 export default function Index() {
   const InputFieldSearchIcon = () => (
     <Svg width="18" height="18" viewBox="0 0 18 18" fill="none">
