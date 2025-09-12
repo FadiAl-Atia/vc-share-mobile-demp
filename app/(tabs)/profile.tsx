@@ -7,18 +7,12 @@ import saveIcon from "@/assets/icons/saveSvg";
 import ProfileInputField from "@/components/profileInputField";
 import { Button, ButtonText } from "@/components/ui/button";
 import useReservationDataConfirmed from "@/hooks/useReservationDataConfirmed";
-import { useFonts } from "expo-font";
+import { Picker } from "@react-native-picker/picker";
+import { useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 export default function Index() {
-  const [loaded] = useFonts({
-    FrutigerArabicLight: require("../../assets/fonts/FrutigerLTArabic45Light.ttf"),
-    FrutigerArabicRoman: require("../../assets/fonts/FrutigerLTArabic55Roman.ttf"),
-    FrutigerArabicBold: require("../../assets/fonts/FrutigerLTArabic65Bold.ttf"),
-  });
-
-  if (!loaded) return null;
-
   const { user } = useReservationDataConfirmed();
+  const [gender, setGender] = useState<string>(user.profile.gender);
 
   return (
     <ScrollView
@@ -144,14 +138,35 @@ export default function Index() {
           labelStyle={{ fontFamily: "FrutigerArabicBold", fontSize: 12 }}
           label={"شركة التأمين"}
         />
-        <ProfileInputField
-          placeholder="اختر الجنس"
-          value={user.profile.gender}
-          isEditable={true}
-          inputFieldStyle={styles.inputField}
-          labelStyle={{ fontFamily: "FrutigerArabicBold", fontSize: 12 }}
-          label={"الجنس"}
-        />
+        <View style={styles.inputField}>
+          <Text style={{ fontFamily: "FrutigerArabicBold", fontSize: 12 }}>
+            الجنس
+          </Text>
+          <View
+            style={{
+              borderWidth: 1,
+              borderColor: "#ccc",
+              borderRadius: 6,
+              marginTop: 12,
+              width: "100%",
+            }}
+          >
+            <Picker
+              selectedValue={gender}
+              onValueChange={(itemValue) => setGender(itemValue)}
+              style={{
+                width: "100%",
+                textAlign: "right",
+                fontFamily: "FrutigerArabicBold",
+                fontSize: 14,
+              }}
+              itemStyle={{ textAlign: "right" }}
+            >
+              <Picker.Item label="ذكر" value="ذكر" />
+              <Picker.Item label="أنثى" value="أنثى" />
+            </Picker>
+          </View>
+        </View>
       </View>
       <View style={styles.buttons}>
         <Button

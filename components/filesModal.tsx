@@ -16,12 +16,18 @@ import Svg, { Path } from "react-native-svg";
 type FileModalProps = {
   visible: boolean;
   onClose: () => void;
+  reservationId: string;
 };
 
-export default function FileModal({ visible, onClose }: FileModalProps) {
-  const [files, setFiles] = useState<DocumentPicker.DocumentPickerAsset[]>([]);
+export default function FileModal({
+  visible,
+  onClose,
+  reservationId,
+}: FileModalProps) {
+  const [files, setFiles] = useState<any[]>([]);
+  const storageKey = reservationId ? `documents_${reservationId}` : "documents";
   const getFiles = async () => {
-    const result = await AsyncStorage.getItem("documents");
+    const result = await AsyncStorage.getItem(storageKey);
     setFiles(result ? JSON.parse(result) : null);
     console.log(`The result is :${result}`);
   };
@@ -40,6 +46,8 @@ export default function FileModal({ visible, onClose }: FileModalProps) {
         multiple: true,
         type: ["application/pdf", "image/png", "image/jpeg"],
       });
+
+      console.log(newFiles);
       setFiles((prevItems) => [
         ...prevItems,
         ...(newFiles.assets ? newFiles.assets : []),
@@ -55,10 +63,12 @@ export default function FileModal({ visible, onClose }: FileModalProps) {
     }
   }, [visible]);
 
-  //Store the changes of the files that the user is doing.
   useEffect(() => {
     const store = async () => {
-      await AsyncStorage.setItem("documents", JSON.stringify(files));
+      await AsyncStorage.setItem(
+        `documents_${reservationId}`,
+        JSON.stringify(files)
+      );
     };
     store();
   }, [files]);
@@ -117,7 +127,7 @@ export default function FileModal({ visible, onClose }: FileModalProps) {
               files?.map((file, key) => (
                 <View key={key} style={styles.fileItem}>
                   <Text style={styles.fileName}>
-                    {file.name ?? String(file)}
+                    {file.name ?? String(file.file.name)}
                   </Text>
                   <Button
                     onPress={() => viewFile(key)}

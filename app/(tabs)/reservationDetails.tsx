@@ -2,19 +2,71 @@ import PaymentDetails from "@/components/paymentDetails";
 import ReservationAttachedFiles from "@/components/reservationAttachedFiles";
 import ReservationInfo from "@/components/reservationInfo";
 import Movement from "@/components/timelineCard";
-import useReservationDataConfirmed from "@/hooks/useReservationDataConfirmed";
 import descriptionMap from "@/models/descriptionMap";
 import statusMap from "@/models/reservationStatusMap";
 import serviceTypeMap from "@/models/serviceTypeMap";
 import statementMap from "@/models/statementMap";
 import movementSvgMap from "@/models/timelineMapSvg";
 import movementTitleMap from "@/models/timelineMapTitle";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { differenceInYears } from "date-fns";
+import { useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
-export default function Index() {
-  const movementData = useReservationDataConfirmed();
 
+export default function Index() {
+  const { reservationDetails } = useLocalSearchParams();
+  const { files } = useLocalSearchParams();
+  const reservationData = JSON.parse(reservationDetails as string);
+
+  let parsedFiles = [];
+  try {
+    parsedFiles = files ? JSON.parse(files as string) : [];
+  } catch (error) {
+    console.error("Error parsing files:", error);
+    parsedFiles = [];
+  }
+
+  const setFilesOfReservationInStorage = async (filesToStore: any[]) => {
+    try {
+      const storageKey = `documents_${reservationData.id}`;
+
+      const existingFilesString = await AsyncStorage.getItem(storageKey);
+      const existingFiles = existingFilesString
+        ? JSON.parse(existingFilesString)
+        : [];
+
+      const newFiles = filesToStore.filter(
+        (newFile) =>
+          !existingFiles.some(
+            (existingFile: any) => existingFile.name === newFile.name
+          )
+      );
+
+      const allFiles = [...existingFiles, ...newFiles];
+
+      await AsyncStorage.setItem(storageKey, JSON.stringify(allFiles));
+
+      console.log(
+        `Added ${newFiles.length} new files. Total: ${allFiles.length}`
+      );
+    } catch (error) {
+      console.error("Error storing files:", error);
+    }
+  };
+
+  useEffect(() => {
+    console.log("useEffect called, parsedFiles:", parsedFiles);
+    console.log("Reservation ID:", reservationData.id);
+
+    // Only store if we have valid data
+    if (reservationData.id) {
+      setFilesOfReservationInStorage(parsedFiles);
+    } else {
+      console.log("No reservation ID found, skipping storage");
+    }
+  }, [parsedFiles, reservationData.id]); // Add dependencies
   return (
     <ScrollView
       style={{ flex: 1 }}
@@ -31,35 +83,44 @@ export default function Index() {
           marginRight: 25,
         }}
       >
-        {`الموعد رقم #${movementData.reservationNumber}`}
+        {`الموعد رقم #${reservationData.reservationNumber}`}
       </Text>
 
       {/* First Container - Appointment Details */}
       <ReservationInfo
-        reservationNumber={movementData.reservationNumber}
-        createdAt={movementData.createdAt}
+        reservationNumber={reservationData.reservationNumber}
+        createdAt={reservationData.createdAt}
         doctorName={
-          movementData.doctor.firstName + " " + movementData.doctor.lastName
+          reservationData.doctor
+            ? reservationData.doctor?.firstName +
+              " " +
+              reservationData.doctor?.lastName
+            : "-"
         }
-        serviceType={serviceTypeMap.get(movementData.service.name)}
-        speciality={movementData.speciality.name}
-        status={statusMap.get(movementData.status)?.()}
-        statement={statementMap.get(movementData.status)?.()}
+        serviceType={serviceTypeMap.get(reservationData.service.name)}
+        speciality={reservationData.speciality.name}
+        status={statusMap.get(reservationData.status)?.()}
+        statement={statementMap.get(reservationData.status)?.(
+          reservationData.scheduledDate
+        )}
       ></ReservationInfo>
       {/* **************************************************************************************************************** */}
       {/* Second */}
       <ReservationAttachedFiles
         patientName={
-          movementData.user.profile.firstName +
+          reservationData.user.profile.firstName +
           " " +
-          movementData.user.profile.lastName
+          reservationData.user.profile.lastName
         }
         patientAge={differenceInYears(
           new Date(),
-          movementData.user.profile.birthDate
+          reservationData.user.profile.birthDate
         )}
-        patientSex={movementData.user.profile.gender}
-        speciality={movementData.speciality.name}
+        patientSex={reservationData.user.profile.gender}
+        speciality={reservationData.speciality.name}
+        filesCount={parsedFiles.length}
+        filesArray={parsedFiles}
+        reservationId={reservationData.id}
       ></ReservationAttachedFiles>
       {/* **************************************************************************************************************** */}
       {/* Third */}
@@ -118,16 +179,14 @@ export default function Index() {
             </Svg>
           </View>
         </View>
-        {movementData.timeline.map((movement, index) => {
+        {reservationData.timeline.map((movement: any, index: any) => {
           const finalDescriptionValue = descriptionMap.get(movement.type); //Confirmed
           let description = "";
           if (typeof finalDescriptionValue === "function") {
             if (movement.type === "REPORT_ATTACHED") {
-              console.log("hi");
               description = finalDescriptionValue(movement.id);
             } else {
-              console.log("whats");
-              description = finalDescriptionValue(movementData);
+              description = finalDescriptionValue(reservationData);
             }
           } else {
             description = finalDescriptionValue;
@@ -136,7 +195,7 @@ export default function Index() {
           const appointmentCreatedTitle = movementTitleMap.get(movement.type);
           let title = "";
           if (typeof appointmentCreatedTitle === "function") {
-            title = appointmentCreatedTitle(movementData);
+            title = appointmentCreatedTitle(reservationData);
           } else {
             title = appointmentCreatedTitle;
           }
@@ -146,9 +205,9 @@ export default function Index() {
               key={index}
               title={title}
               movementSvg={movementSvgMap.get(movement.type)}
-              isLast={index === movementData.timeline.length - 1}
+              isLast={index === reservationData.timeline.length - 1}
               description={description}
-              createdAt={movementData.timeline[index].createdAt}
+              createdAt={reservationData.timeline[index].createdAt}
             />
           );
         })}

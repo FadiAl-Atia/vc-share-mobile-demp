@@ -47,6 +47,14 @@ statusMap.set("ENDED", () => (
     <Text style={{ color: "#2B7FFF" }}>منتهي</Text>
   </View>
 ));
+statusMap.set("EXPIRED", () => (
+  <View style={[styles.status, { borderColor: "#ffcccc" }]}>
+    <Svg height="8" width="8">
+      <Circle cx={4} cy={4} r={4} fill="#ffe2e2" />
+    </Svg>
+    <Text style={{ color: "#9f0712" }}>منتهي الصلاحية</Text>
+  </View>
+));
 
 export default statusMap;
 

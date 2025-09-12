@@ -370,3 +370,17 @@
         createdBy: "GiazbRQ7TjhV7x7lhOYn2rjN7zt1",
       },
     ],
+
+
+
+
+
+
+     <ProfileInputField
+          placeholder="اختر الجنس"
+          value={user.profile.gender}
+          isEditable={true}
+          inputFieldStyle={styles.inputField}
+          labelStyle={{ fontFamily: "FrutigerArabicBold", fontSize: 12 }}
+          label={"الجنس"}
+        />

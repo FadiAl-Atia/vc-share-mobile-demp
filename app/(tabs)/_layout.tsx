@@ -79,9 +79,9 @@ export default function RootLayout() {
         }}
       />
       <Tabs.Screen
-        name="allSpecialities"
+        name="myReservations"
         options={{
-          title: "Dashboard",
+          title: "My Reservations",
           tabBarIcon: ({ focused }) => (
             <View style={focused ? styles.activeIcon : styles.inActiveIcon}>
               <Svg width={28} height={28} viewBox="0 0 28 28" fill="none">

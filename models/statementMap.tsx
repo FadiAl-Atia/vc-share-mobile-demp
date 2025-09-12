@@ -7,10 +7,10 @@ import { StyleSheet, Text, View } from "react-native";
 const statementMap = new Map();
 
 const data = useReservationDataConfirmed();
-statementMap.set("CONFIRMED", () => (
+statementMap.set("CONFIRMED", (date: string) => (
   <Statement
     text={`وقت الموعد المؤكد: ${format(
-      new Date(data.scheduledDate),
+      new Date(date),
       "EEEE - dd/MM/yyyy - HH:mm",
       {
         locale: arSA,
@@ -161,6 +161,30 @@ statementMap.set("ENDED", () => (
       }}
     ></Statement>
   </View>
+));
+statementMap.set("EXPIRED", () => (
+  <Statement
+    text="انتهت صلاحية هذا الموعد."
+    statementStyles={{
+      width: "100%",
+      padding: 4,
+      borderWidth: 1,
+      borderColor: "#f4f4f5",
+      backgroundColor: "#f4f4f5",
+      borderRadius: 8,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      marginTop: 5,
+    }}
+    statementTextStyle={{
+      fontFamily: "FrutigerArabicBold",
+      color: "black",
+      textAlign: "center",
+      fontSize: 13,
+      alignSelf: "center",
+    }}
+  ></Statement>
 ));
 export default statementMap;
 

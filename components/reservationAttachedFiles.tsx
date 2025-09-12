@@ -1,32 +1,33 @@
 import FileModal from "@/components/filesModal";
 import { Button, ButtonText } from "@/components/ui/button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as DatePicker from "expo-document-picker";
 import { useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
-import useReservationDataConfirmed from "@/hooks/useReservationDataConfirmed";
-import { differenceInYears } from "date-fns";
-import { arSA } from "date-fns/locale";
+
 interface reservationInfoProps {
   patientName: string;
   patientAge: number;
   patientSex: string;
   speciality: string;
+  filesCount: number;
+  filesArray: any[];
+  reservationId?: string;
 }
-const data = useReservationDataConfirmed();
 
 export default function ReservationAttachedFiles({
   patientName,
   patientAge,
   patientSex,
   speciality,
+  filesCount,
+  filesArray,
+  reservationId,
 }: reservationInfoProps) {
   const [modalVisible, setModalVisible] = useState(false);
-  const [documents, setDocuments] = useState<DatePicker.DocumentPickerAsset[]>(
-    []
-  );
+  const [documents, setDocuments] = useState<any[]>([]); //Changes the type from DocumentPickerAsset to any just for now.
+
   const navigation = useNavigation();
 
   const openModal = () => {
@@ -39,12 +40,30 @@ export default function ReservationAttachedFiles({
   };
 
   const getFiles = async () => {
-    const results = await AsyncStorage.getItem("documents");
-    if (results && results !== "null") {
-      const parsedResults = JSON.parse(results);
-      setDocuments(parsedResults);
-    } else {
-      setDocuments([]);
+    try {
+      // Use reservation-specific key instead of global "documents"
+      const storageKey = reservationId
+        ? `documents_${reservationId}`
+        : "documents";
+      const results = await AsyncStorage.getItem(storageKey);
+
+      if (results && results !== "null") {
+        const parsedResults = JSON.parse(results);
+        setDocuments(parsedResults);
+      } else {
+        if (filesArray && Array.isArray(filesArray)) {
+          setDocuments(filesArray);
+        } else {
+          setDocuments([]);
+        }
+      }
+    } catch (error) {
+      console.error("Error getting files:", error);
+      if (filesArray && Array.isArray(filesArray)) {
+        setDocuments(filesArray);
+      } else {
+        setDocuments([]);
+      }
     }
   };
 
@@ -53,11 +72,11 @@ export default function ReservationAttachedFiles({
       getFiles();
     });
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, reservationId]);
 
   useEffect(() => {
     getFiles();
-  }, []);
+  }, [reservationId, filesArray]);
 
   return (
     <View style={[styles.container_1, { height: "auto", minHeight: 250 }]}>
@@ -188,7 +207,11 @@ export default function ReservationAttachedFiles({
           <ButtonText>عرض و تعديل الملفات المرفقة</ButtonText>
         </Button>
       </View>
-      <FileModal visible={modalVisible} onClose={closeModal} />
+      <FileModal
+        visible={modalVisible}
+        onClose={closeModal}
+        reservationId={reservationId as string}
+      />
     </View>
   );
 }

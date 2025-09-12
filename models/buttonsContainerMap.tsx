@@ -57,6 +57,11 @@ buttonMap.set("CANCELLED", () => {
     <View style={[styles.buttonContainer, { opacity: 0, height: 40 }]}></View>
   );
 });
+buttonMap.set("EXPIRED", () => {
+  return (
+    <View style={[styles.buttonContainer, { opacity: 0, height: 40 }]}></View>
+  );
+});
 buttonMap.set("NEED_MORE_FILES", () => {
   return (
     <View style={styles.buttonContainer}>
