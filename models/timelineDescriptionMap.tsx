@@ -14,6 +14,14 @@ descriptionMap.set(
   "تم إنشاء حجز جديد بنجاح. سيتم مراجعة طلبك وتعيين طبيب مختص في أقرب وقت ممكن."
 );
 
+descriptionMap.set(
+  "RESCHEDULED_BY_PATIENT",
+  "لقد قمت بطلب إعادة جدولة الموعد. سيتم تأكيد الموعد الجديد قريبًا."
+);
+descriptionMap.set(
+  "RESERVATION_CANCELED",
+  "تم إلغاء الموعد بنجاح، بناء على طلبك"
+);
 descriptionMap.set("APPOINTMENT_CONFIRMED_BY_DOCTOR", (timelineObject: any) => {
   return `${` تم تأكيد الموعد: ${format(
     new Date(timelineObject.scheduledDate),
@@ -24,7 +32,7 @@ descriptionMap.set("APPOINTMENT_CONFIRMED_BY_DOCTOR", (timelineObject: any) => {
   )}`}`;
 });
 descriptionMap.set("REPORT_ATTACHED", (timeLineObject: any) => {
-  return `${JSON.stringify(timeLineObject)} hi`;
+  return `${JSON.stringify(timeLineObject)}`;
 });
 
 export default descriptionMap;

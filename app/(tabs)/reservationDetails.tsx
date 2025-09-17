@@ -3,7 +3,7 @@ import ReservationAttachedFiles from "@/components/reservationAttachedFiles";
 import ReservationInfo from "@/components/reservationInfo";
 import Movement from "@/components/timelineCard";
 import buttonMap from "@/models/buttonsContainerMap";
-import descriptionMap from "@/models/descriptionMap";
+import descriptionMap from "@/models/timelineDescriptionMap";
 import statusMap from "@/models/reservationStatusMap";
 import serviceTypeMap from "@/models/serviceTypeMap";
 import statementMap from "@/models/statementMap";
