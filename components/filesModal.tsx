@@ -1,4 +1,4 @@
-import { Button, ButtonText } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as DocumentPicker from "expo-document-picker";
 import * as Sharing from "expo-sharing";
@@ -113,15 +113,53 @@ export default function FileModal({
               </Text>
             </View>
           </View>
-          <Text
+          <View
             style={{
-              fontFamily: "FrutigerArabicBold",
-              fontSize: 16,
-              marginTop: 12,
+              flexDirection: "row-reverse",
+              justifyContent: "space-between",
+              alignItems: "flex-end",
+              width: "100%",
             }}
           >
-            الملفات المرفقة
-          </Text>
+            <Text
+              style={{
+                fontFamily: "FrutigerArabicBold",
+                fontSize: 16,
+                marginTop: 12,
+              }}
+            >
+              الملفات المرفقة
+            </Text>
+            <Button
+              onPress={addFiles}
+              style={[styles.showButton, styles.addButton]}
+            >
+              <Svg width={16} height={16} viewBox="0 0 20 20" fill="none">
+                <Path
+                  d="M8.33337 12.9165H11.6667"
+                  stroke="#171717"
+                  strokeWidth={1.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <Path
+                  d="M10 11.25L10 14.5833"
+                  stroke="#171717"
+                  strokeWidth={1.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <Path
+                  d="M8.10663 2.5H6.25C5.21447 2.5 4.375 3.33947 4.375 4.375V15.625C4.375 16.6605 5.21447 17.5 6.25 17.5H13.75C14.7855 17.5 15.625 16.6605 15.625 15.625V10M8.10663 2.5C9.14217 2.5 10 3.33947 10 4.375V6.25C10 7.28554 10.8395 8.125 11.875 8.125H13.75C14.7855 8.125 15.625 8.96447 15.625 10M8.10663 2.5C11.1816 2.5 15.625 6.96642 15.625 10"
+                  stroke="#171717"
+                  strokeWidth={1.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </Svg>
+            </Button>
+          </View>
+
           <View style={styles.fileList}>
             {files.length > 0 ? (
               files?.map((file, key) => (
@@ -137,16 +175,13 @@ export default function FileModal({
                       style={{
                         flexDirection: "row-reverse",
                         gap: 6,
-                        justifyContent: "center",
+                        justifyContent: "space-between",
                         alignItems: "center",
                       }}
                     >
-                      <ButtonText style={{ fontSize: 10, color: "#0A0A0A" }}>
-                        عرض الملف
-                      </ButtonText>
                       <Svg
-                        width={14}
-                        height={14}
+                        width={12}
+                        height={12}
                         viewBox="0 0 14 14"
                         fill="none"
                       >
@@ -175,52 +210,7 @@ export default function FileModal({
               </View>
             )}
           </View>
-          <Button
-            onPress={addFiles}
-            style={[styles.showButton, styles.addButton]}
-          >
-            <View
-              style={{
-                flexDirection: "row-reverse",
-                gap: 6,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <ButtonText
-                style={{
-                  fontSize: 10,
-                  color: "#2D2D2D",
-                  fontFamily: "FrutigerArabicBold",
-                }}
-              >
-                تحميل ملف جديد
-              </ButtonText>
-              <Svg width={16} height={16} viewBox="0 0 20 20" fill="none">
-                <Path
-                  d="M8.33337 12.9165H11.6667"
-                  stroke="#171717"
-                  strokeWidth={1.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <Path
-                  d="M10 11.25L10 14.5833"
-                  stroke="#171717"
-                  strokeWidth={1.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <Path
-                  d="M8.10663 2.5H6.25C5.21447 2.5 4.375 3.33947 4.375 4.375V15.625C4.375 16.6605 5.21447 17.5 6.25 17.5H13.75C14.7855 17.5 15.625 16.6605 15.625 15.625V10M8.10663 2.5C9.14217 2.5 10 3.33947 10 4.375V6.25C10 7.28554 10.8395 8.125 11.875 8.125H13.75C14.7855 8.125 15.625 8.96447 15.625 10M8.10663 2.5C11.1816 2.5 15.625 6.96642 15.625 10"
-                  stroke="#171717"
-                  strokeWidth={1.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </Svg>
-            </View>
-          </Button>
+
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeButtonText}>اغلاق</Text>
           </TouchableOpacity>
@@ -275,7 +265,7 @@ const styles = StyleSheet.create({
   fileItem: {
     flexDirection: "row-reverse",
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     paddingVertical: 8,
     gap: 25,
     paddingHorizontal: 12,

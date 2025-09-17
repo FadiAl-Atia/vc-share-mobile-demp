@@ -1,6 +1,5 @@
 import calendarIcon from "@/assets/icons/calendarSvg";
 import useReservationDataConfirmed from "@/hooks/useReservationDataConfirmed";
-import buttonMap from "@/models/buttonsContainerMap";
 import { format } from "date-fns";
 import { arSA } from "date-fns/locale";
 import React, { JSX } from "react";
@@ -15,6 +14,7 @@ interface reservationInfoProps {
   serviceType: string;
   statement: JSX.Element;
   status: JSX.Element;
+  buttonContainter: JSX.Element;
 }
 
 const data = useReservationDataConfirmed();
@@ -27,6 +27,7 @@ export default function Movement({
   statement,
   serviceType,
   status,
+  buttonContainter,
 }: reservationInfoProps) {
   return (
     <View style={styles.container_1}>
@@ -92,8 +93,8 @@ export default function Movement({
               style={{
                 fontFamily: "FrutigerArabicBold",
                 textDecorationLine:
-                  data.status === "CANCELLED" ? "line-through" : "none",
-                color: data.status === "CANCELLED" ? "grey" : "black",
+                  data.status === "CANCELED" ? "line-through" : "none",
+                color: data.status === "CANCELED" ? "grey" : "black",
               }}
             >
               {" "}
@@ -105,23 +106,23 @@ export default function Movement({
                   cx={4}
                   cy={4}
                   r={4}
-                  fill={data.status === "CANCELLED" ? "grey" : "#2B7FFF"}
+                  fill={data.status === "CANCELED" ? "grey" : "#2B7FFF"}
                 />
               </Svg>
               <Text
                 style={{
-                  color: data.status === "CANCELLED" ? "grey" : "#2B7FFF",
+                  color: data.status === "CANCELED" ? "grey" : "#2B7FFF",
                   fontFamily: "FrutigerArabicLight",
                 }}
               >
-                {data.status === "CANCELLED" ? `مسترد` : `مدفوع`}
+                {data.status === "CANCELED" ? `مسترد` : `مدفوع`}
               </Text>
             </View>
           </View>
         </Text>
         {statement}
       </View>
-      {buttonMap.get(data.status)?.()}
+      {buttonContainter}
     </View>
   );
 }

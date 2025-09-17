@@ -17,6 +17,14 @@ import Svg, { Path } from "react-native-svg";
 export default function Index() {
   const [modalVisible, setModalVisible] = useState(false);
 
+  const goToStandard = async () => {
+    await AsyncStorage.setItem("ReservationType", "standard");
+    router.push("/STDchooseSpeciality");
+  };
+  const goToSecondOpinon = async () => {
+    await AsyncStorage.setItem("ReservationType", "second_opinion");
+    router.push("/SOchooseSpeciality");
+  };
   const openModal = () => {
     setModalVisible(true);
   };
@@ -30,14 +38,8 @@ export default function Index() {
     await AsyncStorage.setItem("specialityModal", JSON.stringify(specilaity));
     console.log(`Speciality : ${specilaity.name} has been stored`);
     openModal();
-
-    const stored = await AsyncStorage.getItem("specialityModal");
-    console.log(`The current stored is ${stored}`);
   };
 
-  const pressableFunction = () => {
-    console.log("A pressable");
-  };
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.layout}>
@@ -51,7 +53,10 @@ export default function Index() {
             showsHorizontalScrollIndicator={false}
             contentOffset={{ x: 300, y: 0 }}
           >
-            <View style={[styles.doctorReservation, styles.secondOpinion]}>
+            <TouchableOpacity
+              style={[styles.doctorReservation, styles.secondOpinion]}
+              onPress={goToSecondOpinon}
+            >
               <Text
                 style={{
                   fontFamily: "FrutigerArabicBold",
@@ -82,10 +87,10 @@ export default function Index() {
                 خبرة للحصول على رأي طبي ثانٍ موثوق يساعدك على اتخاذ القرار
                 الصحيح بشأن علاجك.
               </Text>
-            </View>
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.doctorReservation}
-              onPress={() => router.push("/chooseSpeciality")}
+              onPress={goToStandard}
             >
               <Text
                 style={{
@@ -150,7 +155,7 @@ export default function Index() {
         <View style={styles.specialities}>
           {landingPageSpecialities.map((speciality, key) => {
             return (
-              <Pressable onPress={pressableFunction} key={key}>
+              <Pressable key={key}>
                 <Card
                   cardId={key.toString()}
                   description={speciality.description}

@@ -1,6 +1,7 @@
+import NotificationCard from "@/components/notificationCard";
+import type Notification from "@/models/Notification";
 import { useFonts } from "expo-font";
-import { StyleSheet, Text, View } from "react-native";
-
+import { StyleSheet, View } from "react-native";
 export default function Index() {
   const [loaded] = useFonts({
     FrutigerArabicLight: require("../../assets/fonts/FrutigerLTArabic45Light.ttf"),
@@ -10,9 +11,23 @@ export default function Index() {
 
   if (!loaded) return null;
 
+  const dummyNotification: Notification = {
+    id: "123e67sh444",
+    type: "RESERVATION_CONFIRMED",
+    title: "تم تأكيد الموعد",
+    message:
+      "يقدم قسم الصحة النفسية في مستشفى الملك فيصل رعاية نفسية متخصصة، مع التركيز على مرضى زراعة الأعضاء.",
+    createdAt: new Date(),
+  };
+
   return (
     <View style={styles.layout}>
-      <Text>This is a notification page</Text>
+      <NotificationCard
+        title={dummyNotification.title}
+        createdAt={dummyNotification.createdAt}
+        description={dummyNotification.message}
+        isLast={false}
+      ></NotificationCard>
     </View>
   );
 }

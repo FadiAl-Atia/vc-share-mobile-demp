@@ -23,13 +23,15 @@ statusMap.set("NEED_MORE_FILES", () => (
   </View>
 ));
 
-statusMap.set("CANCELLED", () => {
-  <View style={[styles.status, { borderColor: "red" }]}>
-    <Svg height="8" width="8">
-      <Circle cx={4} cy={4} r={4} fill="red" />
-    </Svg>
-    <Text style={{ color: "red" }}>ملغي</Text>
-  </View>;
+statusMap.set("CANCELED", () => {
+  return (
+    <View style={[styles.status, { borderColor: "red" }]}>
+      <Svg height="8" width="8">
+        <Circle cx={4} cy={4} r={4} fill="red" />
+      </Svg>
+      <Text style={{ color: "red" }}>ملغي</Text>
+    </View>
+  );
 });
 statusMap.set("WAITING", () => (
   <View style={[styles.status, { borderColor: "#FF6900" }]}>

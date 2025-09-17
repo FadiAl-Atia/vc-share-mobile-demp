@@ -1,7 +1,7 @@
-import specialityData from "@/assets/arrayData";
 import Card from "@/components/speciality-card";
 import { Button, ButtonText } from "@/components/ui/button";
 import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
+import useAllSpecialities from "@/hooks/useAllSpecialities";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -50,11 +50,12 @@ export default function Index() {
   const handleSubmitButton = () => {
     selectedSpeciality ? setIsSubmitted(false) : setIsSubmitted(true);
     if (selectedSpeciality) {
-      router.push("/reservationDetailsForm");
+      router.push("/STDreservationDetailsForm");
     }
   };
 
   const { width } = useWindowDimensions();
+  const allSpecialities = useAllSpecialities();
 
   return (
     <View style={styles.layout}>
@@ -138,7 +139,7 @@ export default function Index() {
 
       <ScrollView style={{ marginTop: 9, width: width * 0.8 }}>
         <View style={{ gap: 20 }}>
-          {specialityData.map((speciality) => (
+          {allSpecialities.map((speciality) => (
             <Card
               key={speciality.id}
               cardId={speciality.id}

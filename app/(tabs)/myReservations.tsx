@@ -2,9 +2,19 @@ import ReservationCard from "@/components/reservationCard";
 import useMyReservationArray from "@/hooks/useMyReservationArray";
 import statusMap from "@/models/reservationStatusMap";
 import serviceTypeMap from "@/models/serviceTypeMap";
+import { addHours, addMinutes } from "date-fns";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 export default function Index() {
   const data = useMyReservationArray();
+  //Time
+  function composeReservationDate<
+    T extends { scheduledDate: string | Date; minutesFrom: number }
+  >(reservation: T) {
+    return addHours(
+      addMinutes(reservation.scheduledDate, reservation.minutesFrom),
+      8
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.layout}>
@@ -30,7 +40,10 @@ export default function Index() {
               serviceType={serviceTypeMap.get(reservation.service.name)}
               speciality={reservation.speciality.name}
               status={statusMap.get(reservation.status)?.()}
-              scheduledDate={reservation.scheduledDate}
+              scheduledDate={composeReservationDate({
+                scheduledDate: reservation.scheduledDate,
+                minutesFrom: reservation.minutesFrom,
+              })}
               key={index}
               data={reservation}
               files={reservation.files}

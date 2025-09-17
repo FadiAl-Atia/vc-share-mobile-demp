@@ -1,42 +1,35 @@
 import Statement from "@/components/statement";
-import useReservationDataConfirmed from "@/hooks/useReservationDataConfirmed";
-import { format } from "date-fns";
-import { arSA } from "date-fns/locale";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 const statementMap = new Map();
 
-const data = useReservationDataConfirmed();
-statementMap.set("CONFIRMED", (date: string) => (
-  <Statement
-    text={`وقت الموعد المؤكد: ${format(
-      new Date(date),
-      "EEEE - dd/MM/yyyy - HH:mm",
-      {
-        locale: arSA,
-      }
-    )}`}
-    statementStyles={{
-      width: "100%",
-      padding: 4,
-      borderWidth: 1,
-      borderColor: "#2AB25F",
-      borderRadius: 8,
-      flexDirection: "row",
-      alignItems: "flex-end",
-      justifyContent: "center",
-      marginTop: 5,
-    }}
-    statementTextStyle={{
-      fontFamily: "FrutigerArabicBold",
-      color: "#2AB25F",
-      textAlign: "right",
-      fontSize: 13,
-    }}
-  ></Statement>
-));
+statementMap.set(
+  "CONFIRMED",
+  (formattedDate: string, formattedTime: string) => (
+    <Statement
+      text={`وقت الموعد المؤكد: ${formattedDate} - ${formattedTime}`}
+      statementStyles={{
+        width: "100%",
+        padding: 4,
+        borderWidth: 1,
+        borderColor: "#2AB25F",
+        borderRadius: 8,
+        flexDirection: "row",
+        alignItems: "flex-end",
+        justifyContent: "center",
+        marginTop: 5,
+      }}
+      statementTextStyle={{
+        fontFamily: "FrutigerArabicBold",
+        color: "#2AB25F",
+        textAlign: "right",
+        fontSize: 13,
+      }}
+    ></Statement>
+  )
+);
 
-statementMap.set("CANCELLED", () => (
+statementMap.set("CANCELED", () => (
   <Statement
     text="تم الغاء الموعد من قبل المستخدم"
     statementStyles={{

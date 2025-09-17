@@ -10,7 +10,6 @@ export default function Index() {
   const [time, setTime] = useState<Date | null>(null);
   const [date, setDate] = useState<Date | null>(null);
   const [formData, setFormData] = useState<form | null>(null);
-  
 
   const grabAllData = async () => {
     const timeGrabbed = await AsyncStorage.getItem("time-picked");
@@ -78,7 +77,9 @@ export default function Index() {
           <Text style={styles.dataToConfirmTitle}>نوع الطلب</Text>
           <View>
             <View style={styles.dataToConfirmDataContainer}>
-              <Text style={styles.dataToConfirmData}>عادي </Text>
+              <Text style={styles.dataToConfirmData}>
+                {`${formData?.type}`}
+              </Text>
             </View>
           </View>
         </View>

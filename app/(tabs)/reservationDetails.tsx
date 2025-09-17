@@ -2,6 +2,7 @@ import PaymentDetails from "@/components/paymentDetails";
 import ReservationAttachedFiles from "@/components/reservationAttachedFiles";
 import ReservationInfo from "@/components/reservationInfo";
 import Movement from "@/components/timelineCard";
+import buttonMap from "@/models/buttonsContainerMap";
 import descriptionMap from "@/models/descriptionMap";
 import statusMap from "@/models/reservationStatusMap";
 import serviceTypeMap from "@/models/serviceTypeMap";
@@ -9,7 +10,8 @@ import statementMap from "@/models/statementMap";
 import movementSvgMap from "@/models/timelineMapSvg";
 import movementTitleMap from "@/models/timelineMapTitle";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { differenceInYears } from "date-fns";
+import { addHours, addMinutes, differenceInYears, format } from "date-fns";
+import { arSA } from "date-fns/locale";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -56,6 +58,31 @@ export default function Index() {
     }
   };
 
+  //Time
+  function composeReservationDate<
+    T extends { scheduledDate: string | Date; minutesFrom: number }
+  >(reservation: T) {
+    return addHours(
+      addMinutes(reservation.scheduledDate, reservation.minutesFrom),
+      8
+    );
+  }
+  const scheduledDateTime = reservationData
+    ? composeReservationDate({
+        scheduledDate: reservationData.scheduledDate,
+        minutesFrom: reservationData.minutesFrom,
+      })
+    : null;
+  //formattedDate and formattedTime will be displayed.
+  const formattedDate = scheduledDateTime
+    ? format(scheduledDateTime, "EEEE - dd/MM/yyyy", {
+        locale: arSA,
+      })
+    : "";
+  const formattedTime = scheduledDateTime
+    ? format(scheduledDateTime, "h:mm a", { locale: arSA })
+    : "";
+
   useEffect(() => {
     console.log("useEffect called, parsedFiles:", parsedFiles);
     console.log("Reservation ID:", reservationData.id);
@@ -66,7 +93,7 @@ export default function Index() {
     } else {
       console.log("No reservation ID found, skipping storage");
     }
-  }, [parsedFiles, reservationData.id]); // Add dependencies
+  }, [parsedFiles, reservationData.id]);
   return (
     <ScrollView
       style={{ flex: 1 }}
@@ -101,8 +128,10 @@ export default function Index() {
         speciality={reservationData.speciality.name}
         status={statusMap.get(reservationData.status)?.()}
         statement={statementMap.get(reservationData.status)?.(
-          reservationData.scheduledDate
+          formattedDate,
+          formattedTime
         )}
+        buttonContainter={buttonMap.get(reservationData.status)?.()}
       ></ReservationInfo>
       {/* **************************************************************************************************************** */}
       {/* Second */}

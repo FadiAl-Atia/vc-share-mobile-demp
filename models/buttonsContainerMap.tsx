@@ -4,7 +4,7 @@ import fileIcon from "@/assets/icons/filesSVg";
 import leftArrowIcon from "@/assets/icons/leftArrowSvg";
 import trashIcon from "@/assets/icons/trashSvg";
 import ReservationButton from "@/components/reservationButton";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 
 const buttonMap = new Map();
 
@@ -52,9 +52,11 @@ buttonMap.set("CONFIRMED", () => {
     </View>
   );
 });
-buttonMap.set("CANCELLED", () => {
+buttonMap.set("CANCELED", () => {
   return (
-    <View style={[styles.buttonContainer, { opacity: 0, height: 40 }]}></View>
+    <View style={[styles.buttonContainer, { opacity: 1, height: 40 }]}>
+      <Text>asds</Text>
+    </View>
   );
 });
 buttonMap.set("EXPIRED", () => {

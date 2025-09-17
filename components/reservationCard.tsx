@@ -8,7 +8,7 @@ interface reservationCardProps {
   speciality: string;
   serviceType: string;
   status: JSX.Element;
-  scheduledDate: string;
+  scheduledDate: string | Date;
   data: any;
   files: any[];
 }
@@ -81,7 +81,9 @@ export default function ReservationCard({
             <Text style={styles.informationTitle}>تاريخ الموعد : </Text>
           </Text>
           <Text style={{ fontFamily: "FrutigerArabicBold" }}>
-            {`${format(new Date(scheduledDate), "EEEE - dd/MM/yyyy - HH:mm", {
+            {`${format(new Date(scheduledDate), "EEEE - dd/MM/yyyy", {
+              locale: arSA,
+            })} - ${format(new Date(scheduledDate), "h:mm a", {
               locale: arSA,
             })}`}
           </Text>

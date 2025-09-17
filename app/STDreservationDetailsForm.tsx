@@ -1,11 +1,13 @@
 import { Button, ButtonText } from "@/components/ui/button";
 import { Input, InputField } from "@/components/ui/input";
+import useReservationDataConfirmed from "@/hooks/useReservationDataConfirmed";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Label } from "@react-navigation/elements";
 import { useForm } from "@tanstack/react-form";
+import { differenceInYears } from "date-fns";
 import * as DocumentPicker from "expo-document-picker";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -21,14 +23,18 @@ export default function Index() {
   //State
   const [document, setDocument] = useState<PickedFile[]>([]);
   type PickedFile = DocumentPicker.DocumentPickerAsset;
+  const [reservationType, setReservationType] = useState<string>();
   const { width } = useWindowDimensions();
+  const { user } = useReservationDataConfirmed();
 
   //Schema
   const formSchema = z.object({
     name: z.string().min(2, "الاسم مطلوب").max(32),
     sex: z.string(),
     age: z.string().min(2, "يجب أن يكون العمر لا يقل عن 18 عاما"),
-    symptopms: z.string().min(1, "يرجى وصف الحالة بدقة أكبر"),
+    symptopms: z
+      .string()
+      .min(1, "يرجى وصف الأعراض بالتفصيل (على الأقل 10 أحرف)"),
     document: z
       .array(
         z.custom<DocumentPicker.DocumentPickerAsset>(
@@ -37,6 +43,7 @@ export default function Index() {
         )
       )
       .nullable(),
+    type: z.string(),
   });
 
   type form = z.infer<typeof formSchema>;
@@ -54,20 +61,40 @@ export default function Index() {
     setDocument(document.filter((_, i) => i != key));
   }
 
+  useEffect(() => {
+    const fetchReservationType = async () => {
+      try {
+        const result = await AsyncStorage.getItem("ReservationType");
+        if (result) {
+          setReservationType(result);
+          form.setFieldValue("type", result);
+        }
+      } catch (error) {
+        console.error("Error fetching reservation type:", error);
+      }
+    };
+
+    fetchReservationType();
+  }, []);
+
   //Form Hook
   const form = useForm({
     defaultValues: {
-      name: "Fadi",
-      age: "22",
-      sex: "Male",
-      symptopms: "sssssssssssssssssssssssssssss",
+      name: `${user.profile.firstName + " " + user.profile.lastName}`,
+      age: `${Math.abs(differenceInYears(new Date(), user.profile.birthDate))}`,
+      sex: `${user.profile.gender === "male" ? "ذكر" : "أنثى"}`,
+      symptopms: "",
       document: null as DocumentPicker.DocumentPickerAsset[] | null,
+      type: "",
     },
     onSubmit: async ({ value }) => {
       console.log(value);
       await AsyncStorage.setItem("formData", JSON.stringify(value));
-      await AsyncStorage.setItem("documents", JSON.stringify(value.document));
-      router.push("/pickDateAndTime");
+      await AsyncStorage.setItem(
+        "form_documents",
+        JSON.stringify(value.document)
+      );
+      router.push("/STDpickDateAndTime");
     },
     validators: {
       onChange: formSchema,
@@ -95,14 +122,19 @@ export default function Index() {
           children={(field) => (
             <View style={styles.fieldRow}>
               <Label style={styles.labelStyle}>الاسم</Label>
-              <Input style={styles.inputFull}>
+              <Input
+                style={[
+                  styles.inputFull,
+                  { backgroundColor: "#F5F5F5", pointerEvents: "none" },
+                ]}
+              >
                 <InputField
                   placeholder="محمد علي"
                   variant="outline"
                   value={field.state.value}
                   onChangeText={field.handleChange}
                   onBlur={field.handleBlur}
-                  style={styles.textRTL}
+                  style={[styles.textRTL, { color: "#737373" }]}
                 />
               </Input>
               {field.state.meta.errors.length > 0 && <Text>Error</Text>}
@@ -116,7 +148,12 @@ export default function Index() {
           children={(field) => (
             <View style={styles.fieldRow}>
               <Label style={styles.labelStyle}>العمر</Label>
-              <Input style={styles.inputFull}>
+              <Input
+                style={[
+                  styles.inputFull,
+                  { backgroundColor: "#F5F5F5", pointerEvents: "none" },
+                ]}
+              >
                 <InputField
                   placeholder="22"
                   variant="outline"
@@ -124,7 +161,7 @@ export default function Index() {
                   onChangeText={field.handleChange}
                   onBlur={field.handleBlur}
                   keyboardType="numeric"
-                  style={styles.textRTL}
+                  style={[styles.textRTL, { color: "#737373" }]}
                 />
               </Input>
             </View>
@@ -137,7 +174,12 @@ export default function Index() {
           children={(field) => (
             <View style={styles.fieldRow}>
               <Label style={styles.labelStyle}>الجنس</Label>
-              <Input style={[styles.inputFull, { backgroundColor: "#F5F5F5" }]}>
+              <Input
+                style={[
+                  styles.inputFull,
+                  { backgroundColor: "#F5F5F5", pointerEvents: "none" },
+                ]}
+              >
                 <InputField
                   placeholder="ذكر"
                   variant="outline"
@@ -305,7 +347,6 @@ const styles = StyleSheet.create({
   buttons: {
     flexDirection: "row",
     gap: 38,
-    marginTop: 14,
     marginBottom: 50,
     justifyContent: "center",
   },

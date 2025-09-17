@@ -73,7 +73,7 @@ export default function Index() {
   const handleSubmitButton = () => {
     setSubmitButtonPressed(true);
     if (date && time) {
-      router.push("/confirmReservation");
+      router.push("/STDconfirmReservation");
     }
   };
 
